@@ -1,0 +1,243 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="HandheldFriendly" content="True" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="" />
+
+  <link href="https://fonts.googleapis.com/css?family=Source+Code+Pro|Source+Sans+Pro:300,400,400i,700" rel="stylesheet">
+
+    <link rel="stylesheet" type="text/css" href="http://aairey.github.io/theme/stylesheet/style.min.css">
+
+  <link rel="stylesheet" type="text/css" href="http://aairey.github.io/theme/pygments/native.min.css">
+  <link rel="stylesheet" type="text/css" href="http://aairey.github.io/theme/font-awesome/css/font-awesome.min.css">
+
+    <link href="http://aairey.github.io/static/solarized-dark.css" rel="stylesheet">
+
+    <link href="http://aairey.github.io/feeds/all.atom.xml" type="application/atom+xml" rel="alternate" title="blog.airey.be Atom">
+
+
+    <link rel="shortcut icon" href="https://blog.airey.be/images/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="https://blog.airey.be/images/favicon.ico" type="image/x-icon">
+
+
+    <!-- Chrome, Firefox OS and Opera -->
+    <meta name="theme-color" content="#333333">
+    <!-- Windows Phone -->
+    <meta name="msapplication-navbutton-color" content="#333333">
+    <!-- iOS Safari -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <!-- Microsoft EDGE -->
+    <meta name="msapplication-TileColor" content="#333333">
+
+<meta name="author" content="Andy Airey" />
+<meta name="description" content="A small post on how to set up ownCloud to use a letsencrypt certificate within a FreeNAS jail" />
+<meta name="keywords" content="owncloud, security, letsencrypt, freenas">
+
+<meta property="og:site_name" content="blog.airey.be"/>
+<meta property="og:title" content="letsencrypt and OwnCloud"/>
+<meta property="og:description" content="A small post on how to set up ownCloud to use a letsencrypt certificate within a FreeNAS jail"/>
+<meta property="og:locale" content="en_US"/>
+<meta property="og:url" content="http://aairey.github.io/owncloud-letsencrypt.html"/>
+<meta property="og:type" content="article"/>
+<meta property="article:published_time" content="2016-07-07 22:20:00+02:00"/>
+<meta property="article:modified_time" content="2016-08-01 23:52:00+02:00"/>
+<meta property="article:author" content="http://aairey.github.io/author/andy-airey.html">
+<meta property="article:section" content="homelab"/>
+<meta property="article:tag" content="owncloud"/>
+<meta property="article:tag" content="security"/>
+<meta property="article:tag" content="letsencrypt"/>
+<meta property="article:tag" content="freenas"/>
+<meta property="og:image" content="//en.gravatar.com/userimage/33572940/d1226e18865ebdb31edc84661c5abaa3.jpeg">
+
+  <title>blog.airey.be &ndash; letsencrypt and OwnCloud</title>
+
+</head>
+<body>
+  <aside>
+    <div>
+      <a href="http://aairey.github.io">
+        <img src="//en.gravatar.com/userimage/33572940/d1226e18865ebdb31edc84661c5abaa3.jpeg" alt="Andy Airey" title="Andy Airey">
+      </a>
+      <h1><a href="http://aairey.github.io">Andy Airey</a></h1>
+
+<p>sysadmin</p>
+      <nav>
+        <ul class="list">
+
+          <li><a href="http://www.towerlan.be/" target="_blank">TowerLAN</a></li>
+        </ul>
+      </nav>
+
+      <ul class="social">
+        <li><a class="sc-twitter" href="https://twitter.com/a_airey" target="_blank"><i class="fa fa-twitter"></i></a></li>
+        <li><a class="sc-linkedin" href="https://be.linkedin.com/in/andyairey" target="_blank"><i class="fa fa-linkedin"></i></a></li>
+        <li><a class="sc-google" href="https://plus.google.com/u/0/+AndyAirey" target="_blank"><i class="fa fa-google"></i></a></li>
+        <li><a class="sc-github" href="https://github.com/aairey" target="_blank"><i class="fa fa-github"></i></a></li>
+        <li><a class="sc-rss" href="http://aairey.github.io/feeds/all.atom.xml" target="_blank"><i class="fa fa-rss"></i></a></li>
+      </ul>
+    </div>
+
+
+  </aside>
+  <main>
+
+    <nav>
+      <a href="http://aairey.github.io">    Home
+</a>
+
+      <a href="/archives.html">Archives</a>
+      <a href="/categories.html">Categories</a>
+      <a href="/tags.html">Tags</a>
+
+      <a href="http://aairey.github.io/feeds/all.atom.xml">    Atom
+</a>
+
+    </nav>
+
+<article class="single">
+  <header>
+      
+    <h1 id="owncloud-letsencrypt">letsencrypt and OwnCloud</h1>
+    <p>
+          Posted on Thu 07 July 2016 in <a href="http://aairey.github.io/category/homelab.html">homelab</a>
+
+
+    </p>
+  </header>
+
+
+  <div>
+    <p>Hello there.</p>
+<p>Recently I was in the need of an SSL certificate for my personal <a href="https://owncloud.org/">ownCloud</a> server.
+On my setup, ownCloud runs as a <a href="https://doc.freenas.org/9.10/freenas_plugins.html#installing-plugins">plugin for FreeNAS 9.10</a>.</p>
+<p>At the time of writing <a href="https://letsencrypt.org/2016/04/12/leaving-beta-new-sponsors.html">letsencrypt was out of beta</a> for some months and I decided to give it a go.
+I've had good experience with <a href="https://www.startssl.com/">StartSSL</a> and their free certificate for one hostname, but I've been following the letsencrypt developments and I really stand behind what they are doing.</p>
+<p>I have to say I was somewhat surprised by the results. It was really easy to set up and the certificate was trusted, no problem. Even <a href="https://www.ssllabs.com/">SSL Labs</a> didn't complain :).</p>
+<p>Here's how I did it.</p>
+<ol>
+<li>
+<p>On your FreeNAS host, find out which jail is runing owncloud and enter it:</p>
+<div class="highlight"><pre><span></span>jls
+jexec <span class="m">3</span> tcsh
+</pre></div>
+
+
+</li>
+<li>
+<p>Install the needed packages within this jail:</p>
+<div class="highlight"><pre><span></span>pkg install py27-letsencrypt
+</pre></div>
+
+
+</li>
+<li>
+<p>Stop apache and start the setup wizard:</p>
+<div class="highlight"><pre><span></span>/usr/pbi/owncloud-amd64/etc/rc.d/apache24 stop
+letsencrypt certonly
+</pre></div>
+
+
+</li>
+<li>
+<p>Softlink the new certs from the apache directory (replace your.domain.org with the domain name from step 3)</p>
+<div class="highlight"><pre><span></span>/usr/pbi/owncloud-amd64/etc/rc.d/apache24 start
+<span class="nb">cd</span> /usr/pbi/owncloud-amd64/etc/apache24/
+ln -s /usr/local/etc/letsencrypt/live/your.domain.org/cert.pem letsencrypt.crt
+ln -s /usr/local/etc/letsencrypt/live/your.domain.org/privkey.pem letsencrypt.key
+ln -s /usr/local/etc/letsencrypt/live/your.domain.org/chain.pem letsencrypt_chain.crt
+</pre></div>
+
+
+</li>
+<li>
+<p>edit <code>extra/httpd-ssl.conf</code> and change it so that</p>
+<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2
+3
+4
+5
+6
+7</pre></div></td><td class="code"><div class="highlight"><pre><span></span><span class="nb">SSLProtocol</span> <span class="k">all</span> -SSLv2 -SSLv3
+<span class="nb">SSLHonorCipherOrder</span> <span class="k">on</span>
+<span class="nb">SSLCipherSuite</span> <span class="s2">&quot;EECDH+ECDSA+AESGCM EECDH+aRSA+AESGCM EECDH+ECDSA+SHA384 EECDH+ECDSA+SHA256 EECDH+aRSA+SHA384 EECDH+aRSA+SHA256 EECDH+aRSA+RC4 EECDH EDH+aRSA RC4 !aNULL !eNULL !LOW !3DES !MD5 !EXP !PSK !SRP !DSS&quot;</span>
+
+<span class="nb">SSLCertificateFile</span> <span class="s2">&quot;/usr/pbi/owncloud-amd64/etc/apache24/letsencrypt.crt&quot;</span>
+<span class="nb">SSLCertificateKeyFile</span> <span class="s2">&quot;/usr/pbi/owncloud-amd64/etc/apache24/letsencrypt.key&quot;</span>
+<span class="nb">SSLCACertificateFile</span> <span class="s2">&quot;/usr/pbi/owncloud-amd64/etc/apache24/letsencrypt_chain.crt&quot;</span>
+</pre></div>
+</td></tr></table>
+
+</li>
+<li>
+<p>Restart Apache HTTPD:</p>
+<div class="highlight"><pre><span></span>../rc.d/apache24 restart
+</pre></div>
+
+
+</li>
+<li>
+<p>Check the logs for errors:</p>
+<div class="highlight"><pre><span></span>tail /var/log/httpd-error.log
+</pre></div>
+
+
+</li>
+</ol>
+  </div>
+  <div class="tag-cloud">
+    <p>
+      <a href="http://aairey.github.io/tag/owncloud.html">owncloud</a>
+      <a href="http://aairey.github.io/tag/security.html">security</a>
+      <a href="http://aairey.github.io/tag/letsencrypt.html">letsencrypt</a>
+      <a href="http://aairey.github.io/tag/freenas.html">freenas</a>
+    </p>
+  </div>
+
+
+
+
+
+<!-- Disqus -->
+<div id="disqus_thread"></div>
+<script type="text/javascript">
+    var disqus_shortname = 'aaireygithubio';
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>
+        Please enable JavaScript to view comments.
+
+</noscript>
+<!-- End Disqus -->
+</article>
+
+    <footer>
+<p>&copy;  2016</p>
+<p>    Powered by <a href="http://getpelican.com" target="_blank">Pelican</a> - <a href="https://github.com/alexandrevicenzi/flex" target="_blank">Flex</a> theme by <a href="http://alexandrevicenzi.com" target="_blank">Alexandre Vicenzi</a>
+</p>    </footer>
+  </main>
+
+
+
+
+<script type="application/ld+json">
+{
+  "@context" : "http://schema.org",
+  "@type" : "Blog",
+  "name": " blog.airey.be ",
+  "url" : "http://aairey.github.io",
+  "image": "//en.gravatar.com/userimage/33572940/d1226e18865ebdb31edc84661c5abaa3.jpeg",
+  "description": "Andy Airey's Thoughts and Writings"
+}
+</script>
+
+</body>
+</html>

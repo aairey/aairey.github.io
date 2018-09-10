@@ -1,0 +1,309 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="HandheldFriendly" content="True" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="" />
+
+  <link href="https://fonts.googleapis.com/css?family=Source+Code+Pro|Source+Sans+Pro:300,400,400i,700" rel="stylesheet">
+
+    <link rel="stylesheet" type="text/css" href="http://aairey.github.io/theme/stylesheet/style.min.css">
+
+  <link rel="stylesheet" type="text/css" href="http://aairey.github.io/theme/pygments/native.min.css">
+  <link rel="stylesheet" type="text/css" href="http://aairey.github.io/theme/font-awesome/css/font-awesome.min.css">
+
+    <link href="http://aairey.github.io/static/solarized-dark.css" rel="stylesheet">
+
+    <link href="http://aairey.github.io/feeds/all.atom.xml" type="application/atom+xml" rel="alternate" title="blog.airey.be Atom">
+
+
+    <link rel="shortcut icon" href="https://blog.airey.be/images/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="https://blog.airey.be/images/favicon.ico" type="image/x-icon">
+
+
+    <!-- Chrome, Firefox OS and Opera -->
+    <meta name="theme-color" content="#333333">
+    <!-- Windows Phone -->
+    <meta name="msapplication-navbutton-color" content="#333333">
+    <!-- iOS Safari -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <!-- Microsoft EDGE -->
+    <meta name="msapplication-TileColor" content="#333333">
+
+<meta name="author" content="Andy Airey" />
+<meta name="description" content="A small post on how to renew a LetsEncrypt certificate in a FreeBSD jail" />
+<meta name="keywords" content="owncloud, security, letsencrypt, freenas, cerbot, jails">
+
+<meta property="og:site_name" content="blog.airey.be"/>
+<meta property="og:title" content="certbot renew on FreeBSD"/>
+<meta property="og:description" content="A small post on how to renew a LetsEncrypt certificate in a FreeBSD jail"/>
+<meta property="og:locale" content="en_US"/>
+<meta property="og:url" content="http://aairey.github.io/certbot-renew-freebsd.html"/>
+<meta property="og:type" content="article"/>
+<meta property="article:published_time" content="2016-08-17 22:27:00+02:00"/>
+<meta property="article:modified_time" content="2016-08-17 23:30:00+02:00"/>
+<meta property="article:author" content="http://aairey.github.io/author/andy-airey.html">
+<meta property="article:section" content="homelab"/>
+<meta property="article:tag" content="owncloud"/>
+<meta property="article:tag" content="security"/>
+<meta property="article:tag" content="letsencrypt"/>
+<meta property="article:tag" content="freenas"/>
+<meta property="article:tag" content="cerbot"/>
+<meta property="article:tag" content="jails"/>
+<meta property="og:image" content="//en.gravatar.com/userimage/33572940/d1226e18865ebdb31edc84661c5abaa3.jpeg">
+
+  <title>blog.airey.be &ndash; certbot renew on FreeBSD</title>
+
+</head>
+<body>
+  <aside>
+    <div>
+      <a href="http://aairey.github.io">
+        <img src="//en.gravatar.com/userimage/33572940/d1226e18865ebdb31edc84661c5abaa3.jpeg" alt="Andy Airey" title="Andy Airey">
+      </a>
+      <h1><a href="http://aairey.github.io">Andy Airey</a></h1>
+
+<p>sysadmin</p>
+      <nav>
+        <ul class="list">
+
+          <li><a href="http://www.towerlan.be/" target="_blank">TowerLAN</a></li>
+        </ul>
+      </nav>
+
+      <ul class="social">
+        <li><a class="sc-twitter" href="https://twitter.com/a_airey" target="_blank"><i class="fa fa-twitter"></i></a></li>
+        <li><a class="sc-linkedin" href="https://be.linkedin.com/in/andyairey" target="_blank"><i class="fa fa-linkedin"></i></a></li>
+        <li><a class="sc-google" href="https://plus.google.com/u/0/+AndyAirey" target="_blank"><i class="fa fa-google"></i></a></li>
+        <li><a class="sc-github" href="https://github.com/aairey" target="_blank"><i class="fa fa-github"></i></a></li>
+        <li><a class="sc-rss" href="http://aairey.github.io/feeds/all.atom.xml" target="_blank"><i class="fa fa-rss"></i></a></li>
+      </ul>
+    </div>
+
+
+  </aside>
+  <main>
+
+    <nav>
+      <a href="http://aairey.github.io">    Home
+</a>
+
+      <a href="/archives.html">Archives</a>
+      <a href="/categories.html">Categories</a>
+      <a href="/tags.html">Tags</a>
+
+      <a href="http://aairey.github.io/feeds/all.atom.xml">    Atom
+</a>
+
+    </nav>
+
+<article class="single">
+  <header>
+      
+    <h1 id="certbot-renew-freebsd">certbot renew on FreeBSD</h1>
+    <p>
+          Posted on Wed 17 August 2016 in <a href="http://aairey.github.io/category/homelab.html">homelab</a>
+
+
+    </p>
+  </header>
+
+
+  <div>
+    <p>Hi there,</p>
+<p>In <a href="../owncloud-letsencrypt">my last post</a> I talked about getting a free certificate fron <a href="https://letsencrypt.org/">LetsEncrypt</a> using py27-letsencrypt.</p>
+<p>Turns out I was not using the right package for the job.
+The package <a href="https://certbot.eff.org/docs/using.html">certbot</a> is available now and this (also Python) is used in favor of <code>py27-letsencrypt</code>.</p>
+<p>I found out when I wanted to renew my certificate:</p>
+<div class="highlight"><pre><span></span># letsencrypt renew -d your.domain.org
+Currently, the renew verb is only capable of renewing all installed certificates that are due to be renewed; individual domains cannot be specified with this action. If you would like to renew specific certificates, use the certonly command. The renew verb may provide other options for selecting certificates to renew in the future.
+root@owncloud_1:~ # letsencrypt renew
+
+-------------------------------------------------------------------------------
+Processing /usr/local/etc/letsencrypt/renewal/your.domain.org.conf
+-------------------------------------------------------------------------------
+
+-------------------------------------------------------------------------------
+The program httpd (process ID 12020) is already listening on TCP port 80. This
+will prevent us from binding to that port. Please stop the httpd program
+temporarily and then try again. For automated renewal, you may want to use a
+script that stops and starts your webserver. You can find an example at
+https://letsencrypt.org/howitworks/#writing-your-own-renewal-script.
+Alternatively you can use the webroot plugin to renew without needing to stop
+and start your webserver.
+-------------------------------------------------------------------------------
+2016-08-17 20:54:09,442:WARNING:letsencrypt.renewal:Attempting to renew cert from /usr/local/etc/letsencrypt/renewal/your.domain.org.conf produced an unexpected error: At least one of the (possibly) required ports is already taken.. Skipping.
+
+All renewal attempts failed. The following certs could not be renewed:
+  /usr/local/etc/letsencrypt/live/your.domain.org/fullchain.pem (failure)
+1 renew failure(s), 0 parse failure(s)
+</pre></div>
+
+
+<p>Due to the first error, I wondered if my version was out of date.</p>
+<div class="highlight"><pre><span></span>pkg update
+pkg upgrade
+</pre></div>
+
+
+<p>Yes there was an update, but after the upgrade it was even worse:</p>
+<div class="highlight"><pre><span></span><span class="c1"># letsencrypt renew --certonly</span>
+<span class="n">Traceback</span> <span class="p">(</span><span class="n">most</span> <span class="n">recent</span> <span class="n">call</span> <span class="n">last</span><span class="p">):</span>
+  <span class="n">File</span> <span class="s2">&quot;/usr/local/bin/letsencrypt&quot;</span><span class="p">,</span> <span class="n">line</span> <span class="mi">5</span><span class="p">,</span> <span class="ow">in</span> <span class="o">&lt;</span><span class="n">module</span><span class="o">&gt;</span>
+    <span class="kn">from</span> <span class="nn">pkg_resources</span> <span class="kn">import</span> <span class="n">load_entry_point</span>
+  <span class="n">File</span> <span class="s2">&quot;/usr/local/lib/python2.7/site-packages/pkg_resources/__init__.py&quot;</span><span class="p">,</span> <span class="n">line</span> <span class="mi">2927</span><span class="p">,</span> <span class="ow">in</span> <span class="o">&lt;</span><span class="n">module</span><span class="o">&gt;</span>
+    <span class="nd">@_call_aside</span>
+  <span class="n">File</span> <span class="s2">&quot;/usr/local/lib/python2.7/site-packages/pkg_resources/__init__.py&quot;</span><span class="p">,</span> <span class="n">line</span> <span class="mi">2913</span><span class="p">,</span> <span class="ow">in</span> <span class="n">_call_aside</span>
+    <span class="n">f</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+  <span class="n">File</span> <span class="s2">&quot;/usr/local/lib/python2.7/site-packages/pkg_resources/__init__.py&quot;</span><span class="p">,</span> <span class="n">line</span> <span class="mi">2940</span><span class="p">,</span> <span class="ow">in</span> <span class="n">_initialize_master_working_set</span>
+    <span class="n">working_set</span> <span class="o">=</span> <span class="n">WorkingSet</span><span class="o">.</span><span class="n">_build_master</span><span class="p">()</span>
+  <span class="n">File</span> <span class="s2">&quot;/usr/local/lib/python2.7/site-packages/pkg_resources/__init__.py&quot;</span><span class="p">,</span> <span class="n">line</span> <span class="mi">637</span><span class="p">,</span> <span class="ow">in</span> <span class="n">_build_master</span>
+    <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_build_from_requirements</span><span class="p">(</span><span class="n">__requires__</span><span class="p">)</span>
+  <span class="n">File</span> <span class="s2">&quot;/usr/local/lib/python2.7/site-packages/pkg_resources/__init__.py&quot;</span><span class="p">,</span> <span class="n">line</span> <span class="mi">650</span><span class="p">,</span> <span class="ow">in</span> <span class="n">_build_from_requirements</span>
+    <span class="n">dists</span> <span class="o">=</span> <span class="n">ws</span><span class="o">.</span><span class="n">resolve</span><span class="p">(</span><span class="n">reqs</span><span class="p">,</span> <span class="n">Environment</span><span class="p">())</span>
+  <span class="n">File</span> <span class="s2">&quot;/usr/local/lib/python2.7/site-packages/pkg_resources/__init__.py&quot;</span><span class="p">,</span> <span class="n">line</span> <span class="mi">829</span><span class="p">,</span> <span class="ow">in</span> <span class="n">resolve</span>
+    <span class="k">raise</span> <span class="n">DistributionNotFound</span><span class="p">(</span><span class="n">req</span><span class="p">,</span> <span class="n">requirers</span><span class="p">)</span>
+<span class="n">pkg_resources</span><span class="o">.</span><span class="n">DistributionNotFound</span><span class="p">:</span> <span class="n">The</span> <span class="s1">&#39;acme==0.5.0&#39;</span> <span class="n">distribution</span> <span class="n">was</span> <span class="ow">not</span> <span class="n">found</span> <span class="ow">and</span> <span class="ow">is</span> <span class="n">required</span> <span class="n">by</span> <span class="n">letsencrypt</span>
+<span class="n">root</span><span class="nd">@owncloud_1</span><span class="p">:</span><span class="o">~</span> <span class="c1"># letsencrypt</span>
+<span class="n">Traceback</span> <span class="p">(</span><span class="n">most</span> <span class="n">recent</span> <span class="n">call</span> <span class="n">last</span><span class="p">):</span>
+  <span class="n">File</span> <span class="s2">&quot;/usr/local/bin/letsencrypt&quot;</span><span class="p">,</span> <span class="n">line</span> <span class="mi">5</span><span class="p">,</span> <span class="ow">in</span> <span class="o">&lt;</span><span class="n">module</span><span class="o">&gt;</span>
+    <span class="kn">from</span> <span class="nn">pkg_resources</span> <span class="kn">import</span> <span class="n">load_entry_point</span>
+  <span class="n">File</span> <span class="s2">&quot;/usr/local/lib/python2.7/site-packages/pkg_resources/__init__.py&quot;</span><span class="p">,</span> <span class="n">line</span> <span class="mi">2927</span><span class="p">,</span> <span class="ow">in</span> <span class="o">&lt;</span><span class="n">module</span><span class="o">&gt;</span>
+    <span class="nd">@_call_aside</span>
+  <span class="n">File</span> <span class="s2">&quot;/usr/local/lib/python2.7/site-packages/pkg_resources/__init__.py&quot;</span><span class="p">,</span> <span class="n">line</span> <span class="mi">2913</span><span class="p">,</span> <span class="ow">in</span> <span class="n">_call_aside</span>
+    <span class="n">f</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+  <span class="n">File</span> <span class="s2">&quot;/usr/local/lib/python2.7/site-packages/pkg_resources/__init__.py&quot;</span><span class="p">,</span> <span class="n">line</span> <span class="mi">2940</span><span class="p">,</span> <span class="ow">in</span> <span class="n">_initialize_master_working_set</span>
+    <span class="n">working_set</span> <span class="o">=</span> <span class="n">WorkingSet</span><span class="o">.</span><span class="n">_build_master</span><span class="p">()</span>
+  <span class="n">File</span> <span class="s2">&quot;/usr/local/lib/python2.7/site-packages/pkg_resources/__init__.py&quot;</span><span class="p">,</span> <span class="n">line</span> <span class="mi">637</span><span class="p">,</span> <span class="ow">in</span> <span class="n">_build_master</span>
+    <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_build_from_requirements</span><span class="p">(</span><span class="n">__requires__</span><span class="p">)</span>
+  <span class="n">File</span> <span class="s2">&quot;/usr/local/lib/python2.7/site-packages/pkg_resources/__init__.py&quot;</span><span class="p">,</span> <span class="n">line</span> <span class="mi">650</span><span class="p">,</span> <span class="ow">in</span> <span class="n">_build_from_requirements</span>
+    <span class="n">dists</span> <span class="o">=</span> <span class="n">ws</span><span class="o">.</span><span class="n">resolve</span><span class="p">(</span><span class="n">reqs</span><span class="p">,</span> <span class="n">Environment</span><span class="p">())</span>
+  <span class="n">File</span> <span class="s2">&quot;/usr/local/lib/python2.7/site-packages/pkg_resources/__init__.py&quot;</span><span class="p">,</span> <span class="n">line</span> <span class="mi">829</span><span class="p">,</span> <span class="ow">in</span> <span class="n">resolve</span>
+    <span class="k">raise</span> <span class="n">DistributionNotFound</span><span class="p">(</span><span class="n">req</span><span class="p">,</span> <span class="n">requirers</span><span class="p">)</span>
+<span class="n">pkg_resources</span><span class="o">.</span><span class="n">DistributionNotFound</span><span class="p">:</span> <span class="n">The</span> <span class="s1">&#39;acme==0.5.0&#39;</span> <span class="n">distribution</span> <span class="n">was</span> <span class="ow">not</span> <span class="n">found</span> <span class="ow">and</span> <span class="ow">is</span> <span class="n">required</span> <span class="n">by</span> <span class="n">letsencrypt</span>
+</pre></div>
+
+
+<p>After some googling, it seemed I needed letsencrypt-auto or certbot-auto, both not available through the package manager in FreeBSD. So not really my preference.</p>
+<p>I found <a href="https://certbot.eff.org/all-instructions/#freebsd-apache">this page</a> so I installed plain certbot</p>
+<div class="highlight"><pre><span></span>pkg search certbot
+pkg install certbot
+</pre></div>
+
+
+<p>Turns out this was requiring the same <code>acme</code> dependency and version:</p>
+<div class="highlight"><pre><span></span># certbot
+An unexpected error occurred:
+VersionConflict: (acme 0.8.1 (/usr/local/lib/python2.7/site-packages), Requirement.parse(&#39;acme==0.5.0&#39;))
+Please see the logfile &#39;certbot.log&#39; for more details.
+</pre></div>
+
+
+<p>I then found <a href="https://github.com/certbot/certbot/issues/3221">this solution</a> and uninstalled it with <code>pip</code>:</p>
+<div class="highlight"><pre><span></span>pip uninstall letsencrypt
+</pre></div>
+
+
+<p>I could then do a renew <a href="https://certbot.eff.org/docs/using.html">as follows</a>:</p>
+<div class="highlight"><pre><span></span># certbot renew --dry-run
+
+-------------------------------------------------------------------------------
+Processing /usr/local/etc/letsencrypt/renewal/your.domain.org.conf
+-------------------------------------------------------------------------------
+
+-------------------------------------------------------------------------------
+The program httpd (process ID 12020) is already listening on TCP port 80. This
+will prevent us from binding to that port. Please stop the httpd program
+temporarily and then try again. For automated renewal, you may want to use a
+script that stops and starts your webserver. You can find an example at
+https://letsencrypt.org/howitworks/#writing-your-own-renewal-script.
+Alternatively you can use the webroot plugin to renew without needing to stop
+and start your webserver.
+-------------------------------------------------------------------------------
+2016-08-17 21:52:47,093:WARNING:certbot.renewal:Attempting to renew cert from /usr/local/etc/letsencrypt/renewal/your.domain.org.conf produced an unexpected error: At least one of the (possibly) required ports is already taken.. Skipping.
+** DRY RUN: simulating &#39;certbot renew&#39; close to cert expiry
+**          (The test certificates below have not been saved.)
+
+All renewal attempts failed. The following certs could not be renewed:
+  /usr/local/etc/letsencrypt/live/your.domain.org/fullchain.pem (failure)
+** DRY RUN: simulating &#39;certbot renew&#39; close to cert expiry
+**          (The test certificates above have not been saved.)
+1 renew failure(s), 0 parse failure(s)
+</pre></div>
+
+
+<p>So it tries to run it's own webserver and auto-approve the renewal this way by connecting to it.
+This is of course not possible when Apache is running and using the same port on the system.
+It is possible to specify a <a href="https://community.letsencrypt.org/t/le-client-needs-to-bind-to-port-80-which-im-already-using/2739/10">different port</a>, but then you need to set up a NAT/Proxy rule to this port so that it is accessible through standard HTTP on port 80.</p>
+<p>This is not a production server so I wrapped it with these hooks (as recommended):</p>
+<div class="highlight"><pre><span></span>certbot renew --standalone --pre-hook &quot;/usr/pbi/owncloud-amd64/etc/rc.d/apache24 stop&quot; --post-hook &quot;/usr/pbi/owncloud-amd64/etc/rc.d/apache24 start&quot; --dry-run
+</pre></div>
+
+
+<p>The dry-run was succesful! (in retrospect - could've done this with the original <code>py27-letsencrypt</code> too ...)
+Finally, I set up crontab to take care of this for me in the future:</p>
+<div class="highlight"><pre><span></span>0 3 1 */3 * root certbot renew --standalone --pre-hook &quot;/usr/pbi/owncloud-amd64/etc/rc.d/apache24 stop&quot; --post-hook &quot;/usr/pbi/owncloud-amd64/etc/rc.d/apache24 start&quot;
+</pre></div>
+
+
+<p>This will check and renew the cert every 3 (1st of Jan, Apr, Jul, Oct).</p>
+<p>Future-you will thank you!</p>
+  </div>
+  <div class="tag-cloud">
+    <p>
+      <a href="http://aairey.github.io/tag/owncloud.html">owncloud</a>
+      <a href="http://aairey.github.io/tag/security.html">security</a>
+      <a href="http://aairey.github.io/tag/letsencrypt.html">letsencrypt</a>
+      <a href="http://aairey.github.io/tag/freenas.html">freenas</a>
+      <a href="http://aairey.github.io/tag/cerbot.html">cerbot</a>
+      <a href="http://aairey.github.io/tag/jails.html">jails</a>
+    </p>
+  </div>
+
+
+
+
+
+<!-- Disqus -->
+<div id="disqus_thread"></div>
+<script type="text/javascript">
+    var disqus_shortname = 'aaireygithubio';
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>
+        Please enable JavaScript to view comments.
+
+</noscript>
+<!-- End Disqus -->
+</article>
+
+    <footer>
+<p>&copy;  2016</p>
+<p>    Powered by <a href="http://getpelican.com" target="_blank">Pelican</a> - <a href="https://github.com/alexandrevicenzi/flex" target="_blank">Flex</a> theme by <a href="http://alexandrevicenzi.com" target="_blank">Alexandre Vicenzi</a>
+</p>    </footer>
+  </main>
+
+
+
+
+<script type="application/ld+json">
+{
+  "@context" : "http://schema.org",
+  "@type" : "Blog",
+  "name": " blog.airey.be ",
+  "url" : "http://aairey.github.io",
+  "image": "//en.gravatar.com/userimage/33572940/d1226e18865ebdb31edc84661c5abaa3.jpeg",
+  "description": "Andy Airey's Thoughts and Writings"
+}
+</script>
+
+</body>
+</html>

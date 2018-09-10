@@ -1,0 +1,211 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="HandheldFriendly" content="True" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="" />
+
+  <link href="https://fonts.googleapis.com/css?family=Source+Code+Pro|Source+Sans+Pro:300,400,400i,700" rel="stylesheet">
+
+    <link rel="stylesheet" type="text/css" href="http://aairey.github.io/theme/stylesheet/style.min.css">
+
+  <link rel="stylesheet" type="text/css" href="http://aairey.github.io/theme/pygments/native.min.css">
+  <link rel="stylesheet" type="text/css" href="http://aairey.github.io/theme/font-awesome/css/font-awesome.min.css">
+
+    <link href="http://aairey.github.io/static/solarized-dark.css" rel="stylesheet">
+
+    <link href="http://aairey.github.io/feeds/all.atom.xml" type="application/atom+xml" rel="alternate" title="blog.airey.be Atom">
+
+
+    <link rel="shortcut icon" href="https://blog.airey.be/images/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="https://blog.airey.be/images/favicon.ico" type="image/x-icon">
+
+
+    <!-- Chrome, Firefox OS and Opera -->
+    <meta name="theme-color" content="#333333">
+    <!-- Windows Phone -->
+    <meta name="msapplication-navbutton-color" content="#333333">
+    <!-- iOS Safari -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <!-- Microsoft EDGE -->
+    <meta name="msapplication-TileColor" content="#333333">
+
+<meta name="author" content="Andy Airey" />
+<meta name="description" content="Did the upgrade to 9.1 give you a broken setup too? Here is a small guide to resolve it." />
+<meta name="keywords" content="owncloud, freenas, upgrade">
+
+<meta property="og:site_name" content="blog.airey.be"/>
+<meta property="og:title" content="ownCloud 9.1 upgrade on FreeNAS"/>
+<meta property="og:description" content="Did the upgrade to 9.1 give you a broken setup too? Here is a small guide to resolve it."/>
+<meta property="og:locale" content="en_US"/>
+<meta property="og:url" content="http://aairey.github.io/owncloud-91-upgrade-freenas.html"/>
+<meta property="og:type" content="article"/>
+<meta property="article:published_time" content="2016-11-18 14:21:00+01:00"/>
+<meta property="article:modified_time" content="2016-11-21 00:13:00+01:00"/>
+<meta property="article:author" content="http://aairey.github.io/author/andy-airey.html">
+<meta property="article:section" content="homelab"/>
+<meta property="article:tag" content="owncloud"/>
+<meta property="article:tag" content="freenas"/>
+<meta property="article:tag" content="upgrade"/>
+<meta property="og:image" content="//en.gravatar.com/userimage/33572940/d1226e18865ebdb31edc84661c5abaa3.jpeg">
+
+  <title>blog.airey.be &ndash; ownCloud 9.1 upgrade on FreeNAS</title>
+
+</head>
+<body>
+  <aside>
+    <div>
+      <a href="http://aairey.github.io">
+        <img src="//en.gravatar.com/userimage/33572940/d1226e18865ebdb31edc84661c5abaa3.jpeg" alt="Andy Airey" title="Andy Airey">
+      </a>
+      <h1><a href="http://aairey.github.io">Andy Airey</a></h1>
+
+<p>sysadmin</p>
+      <nav>
+        <ul class="list">
+
+          <li><a href="http://www.towerlan.be/" target="_blank">TowerLAN</a></li>
+        </ul>
+      </nav>
+
+      <ul class="social">
+        <li><a class="sc-twitter" href="https://twitter.com/a_airey" target="_blank"><i class="fa fa-twitter"></i></a></li>
+        <li><a class="sc-linkedin" href="https://be.linkedin.com/in/andyairey" target="_blank"><i class="fa fa-linkedin"></i></a></li>
+        <li><a class="sc-google" href="https://plus.google.com/u/0/+AndyAirey" target="_blank"><i class="fa fa-google"></i></a></li>
+        <li><a class="sc-github" href="https://github.com/aairey" target="_blank"><i class="fa fa-github"></i></a></li>
+        <li><a class="sc-rss" href="http://aairey.github.io/feeds/all.atom.xml" target="_blank"><i class="fa fa-rss"></i></a></li>
+      </ul>
+    </div>
+
+
+  </aside>
+  <main>
+
+    <nav>
+      <a href="http://aairey.github.io">    Home
+</a>
+
+      <a href="/archives.html">Archives</a>
+      <a href="/categories.html">Categories</a>
+      <a href="/tags.html">Tags</a>
+
+      <a href="http://aairey.github.io/feeds/all.atom.xml">    Atom
+</a>
+
+    </nav>
+
+<article class="single">
+  <header>
+      
+    <h1 id="owncloud-91-upgrade-freenas">ownCloud 9.1 upgrade on FreeNAS</h1>
+    <p>
+          Posted on Fri 18 November 2016 in <a href="http://aairey.github.io/category/homelab.html">homelab</a>
+
+
+    </p>
+  </header>
+
+
+  <div>
+    <p>Hello there.</p>
+<p>I updated my ownCloud FreeNAS plugin to the latest version.</p>
+<p>After that I did not get my login page back, but I had to continue doing the update manually through the CLI.</p>
+<p>Below are the steps I took.</p>
+<p>This might help other people using ownCloud on FreeNAS/FreeBSD.</p>
+<ol>
+<li>
+<p>First log in to your FreeNAS box and enter the correct jail</p>
+<div class="highlight"><pre><span></span>jls
+jexec <span class="m">4</span> tcsh    <span class="c1"># in my case jail number 4 was ownCloud</span>
+</pre></div>
+
+
+</li>
+<li>
+<p>Then you should go to the owncloud install directory</p>
+<div class="highlight"><pre><span></span><span class="nb">cd</span> /usr/pbi/owncloud-amd64/www/owncloud
+</pre></div>
+
+
+</li>
+<li>
+<p>Now the following command should be run to conclude the upgrade process (see the official <a href="https://doc.owncloud.org/server/9.1/admin_manual/configuration_server/occ_command.html#command-line-upgrade">docs</a>).
+   On FreeBSD it is a little different:</p>
+<div class="highlight"><pre><span></span>su -m www -c <span class="s1">&#39;php occ upgrade&#39;</span>
+</pre></div>
+
+
+</li>
+<li>
+<p>That will give you a bunch of errors, the problem is that php and it's dependencies are not installed.
+   Here are all the dependencies I had to install:</p>
+<div class="highlight"><pre><span></span>pkg install php56 php56-ctype php56-gd php56-xmlreader php56-xml php56-zip php56-xmlwriter php56-curl <span class="se">\</span>
+            php56-zlib php56-hash php56-mbstring php56-posix php56-pdo php56-sqlite3 php56-pdo_sqlite <span class="se">\</span>
+            php56-json php56-simplexml
+</pre></div>
+
+
+</li>
+<li>
+<p>After that I could run the upgrade command without and I got my login prompt back!</p>
+</li>
+</ol>
+<p>Disclaimer: I am not a FreeBSD expert, so there might be a cleaner way to do this.</p>
+<p>I found it really weird that I had to install php56 after a plain update of the ownCloud pbi ...</p>
+<p><strong>Update:</strong> There is now an <a href="https://forums.freenas.org/index.php?threads/new-plugins-for-freenas-9-november-2016-nextcloud-madsonic-resilio-nzbhydra.47259/">official NextCloud plugin for FreeNAS</a>, we should all be using that now. Here's <a href="http://www.techrepublic.com/article/owncloud-founder-has-forked-their-product-into-nextcloud/">why</a>.</p>
+  </div>
+  <div class="tag-cloud">
+    <p>
+      <a href="http://aairey.github.io/tag/owncloud.html">owncloud</a>
+      <a href="http://aairey.github.io/tag/freenas.html">freenas</a>
+      <a href="http://aairey.github.io/tag/upgrade.html">upgrade</a>
+    </p>
+  </div>
+
+
+
+
+
+<!-- Disqus -->
+<div id="disqus_thread"></div>
+<script type="text/javascript">
+    var disqus_shortname = 'aaireygithubio';
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>
+        Please enable JavaScript to view comments.
+
+</noscript>
+<!-- End Disqus -->
+</article>
+
+    <footer>
+<p>&copy;  2016</p>
+<p>    Powered by <a href="http://getpelican.com" target="_blank">Pelican</a> - <a href="https://github.com/alexandrevicenzi/flex" target="_blank">Flex</a> theme by <a href="http://alexandrevicenzi.com" target="_blank">Alexandre Vicenzi</a>
+</p>    </footer>
+  </main>
+
+
+
+
+<script type="application/ld+json">
+{
+  "@context" : "http://schema.org",
+  "@type" : "Blog",
+  "name": " blog.airey.be ",
+  "url" : "http://aairey.github.io",
+  "image": "//en.gravatar.com/userimage/33572940/d1226e18865ebdb31edc84661c5abaa3.jpeg",
+  "description": "Andy Airey's Thoughts and Writings"
+}
+</script>
+
+</body>
+</html>

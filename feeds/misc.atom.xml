@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom"><title>blog.airey.be - misc</title><link href="http://aairey.github.io/" rel="alternate"></link><link href="http://aairey.github.io/feeds/misc.atom.xml" rel="self"></link><id>http://aairey.github.io/</id><updated>2016-07-06T00:49:00+02:00</updated><entry><title>My First Post</title><link href="http://aairey.github.io/first-post.html" rel="alternate"></link><published>2016-07-06T00:49:00+02:00</published><updated>2016-07-06T00:49:00+02:00</updated><author><name>Andy Airey</name></author><id>tag:aairey.github.io,2016-07-06:/first-post.html</id><summary type="html">&lt;p&gt;First Post to this blog&lt;/p&gt;</summary><content type="html">&lt;p&gt;So, my first post on this blog.&lt;/p&gt;
+&lt;p&gt;Let's not make any promises here, but a frequency of one post a month would already be high above my expectations of myself. :)&lt;/p&gt;
+&lt;p&gt;As some may know I've tried a few other blogs but gave up on writing.
+Let's see where this takes us ...&lt;/p&gt;
+&lt;p&gt;I chose pelican as a static site generator because it uses Python.
+I preferred this over Jekyll's Ruby for example.&lt;/p&gt;
+&lt;p&gt;If you're interested in my setup, I basicly did something similar to &lt;a href="https://fedoramagazine.org/make-github-pages-blog-with-pelican/"&gt;this&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;That's all for now.
+See you around!&lt;/p&gt;</content><category term="pelican"></category><category term="python"></category></entry></feed>

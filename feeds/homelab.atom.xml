@@ -1,0 +1,379 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom"><title>blog.airey.be - homelab</title><link href="http://aairey.github.io/" rel="alternate"></link><link href="http://aairey.github.io/feeds/homelab.atom.xml" rel="self"></link><id>http://aairey.github.io/</id><updated>2018-09-10T23:06:00+02:00</updated><entry><title>Wireguard Setup on Fedora</title><link href="http://aairey.github.io/wireguard-setup.html" rel="alternate"></link><published>2018-09-10T21:49:00+02:00</published><updated>2018-09-10T23:06:00+02:00</updated><author><name>Andy Airey</name></author><id>tag:aairey.github.io,2018-09-10:/wireguard-setup.html</id><summary type="html">&lt;p&gt;How To setup and use Wireguard on Fedora Workstation as client and Fedora Server as PtP and VPN server. Also covers the setup on Android&lt;/p&gt;</summary><content type="html">&lt;p&gt;Ever since Linus Torvalds &lt;a href="http://lkml.iu.edu/hypermail/linux/kernel/1808.0/02472.html"&gt;praised&lt;/a&gt; Wireguard, I've been wanting to try it out.&lt;br&gt;
+Last week I finally got around to play with it, and boy was it easy and elegant to set up.&lt;/p&gt;
+&lt;p&gt;It was really easy to set up, it took me longer to write this blog post than to set up wireguard on 3 peers.&lt;/p&gt;
+&lt;p&gt;I used a Fedora Server as a first endpoint and my Fedora Workstation as a second endpoint.&lt;br&gt;
+Later on I also easily added my Android phone as a third endpoint, and set up the Fedora Server as a VPN server (routing traffic to the internal and external networks).&lt;/p&gt;
+&lt;p&gt;Let me walk you through the setup steps.&lt;/p&gt;
+&lt;h1&gt;Installation&lt;/h1&gt;
+&lt;p&gt;We need to install wireguard first as it is not yet part of the mainline kernel.&lt;/p&gt;
+&lt;p&gt;On the Fedora Server and Workstation:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;sudo dnf copr &lt;span class="nb"&gt;enable&lt;/span&gt; jdoss/wireguard
+sudo dnf install wireguard-dkms wireguard-tools
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;h1&gt;Setting up the endpoints&lt;/h1&gt;
+&lt;p&gt;As you will see below the setup is very similar for both endpoints.&lt;br&gt;
+Note the difference in IP addresses.&lt;/p&gt;
+&lt;p&gt;We will choose a static tunnel IP per host in the 10.0.0.0/24 range, but it could be any range of your choosing.&lt;/p&gt;
+&lt;p&gt;Create a keypair on each host:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;wg genkey &amp;gt; private
+wg pubkey &amp;lt; private
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Take note of the public key to configure your other client later on.&lt;/p&gt;
+&lt;h2&gt;First peer&lt;/h2&gt;
+&lt;p&gt;Our first endpoint has a private IP address of 192.168.2.1/24 on enp2s0, adapt it to match your machine's private IP address.&lt;/p&gt;
+&lt;p&gt;Interface Settings:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;ip link add dev wg0 &lt;span class="nb"&gt;type&lt;/span&gt; wireguard
+ip address add dev wg0 &lt;span class="m"&gt;10&lt;/span&gt;.0.0.1/24
+wg &lt;span class="nb"&gt;set&lt;/span&gt; wg0 listen-port &lt;span class="m"&gt;51820&lt;/span&gt; private-key ./private
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Peer Settings:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;wg &lt;span class="nb"&gt;set&lt;/span&gt; wg0 peer &amp;lt;peer2-public-key&amp;gt; allowed-ips &lt;span class="m"&gt;10&lt;/span&gt;.0.0.2/32 endpoint &amp;lt;peer2-pulic-ip&amp;gt;:51820
+ip link &lt;span class="nb"&gt;set&lt;/span&gt; wg0 up
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;The &lt;code&gt;allowed-ips&lt;/code&gt; setting denotes what network lies at the other end of the tunnel.&lt;br&gt;
+Routes will automatically be set up towards these networks when the interface becomes active.&lt;br&gt;
+As a starting point we can use the other peer's tunnel IP address.&lt;/p&gt;
+&lt;h2&gt;Second peer&lt;/h2&gt;
+&lt;p&gt;Interface Settings:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;ip link add dev wg0 &lt;span class="nb"&gt;type&lt;/span&gt; wireguard
+ip address add dev wg0 &lt;span class="m"&gt;10&lt;/span&gt;.0.0.2/24
+wg &lt;span class="nb"&gt;set&lt;/span&gt; wg0 listen-port &lt;span class="m"&gt;51820&lt;/span&gt; private-key ./private
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Peer Settings:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;wg &lt;span class="nb"&gt;set&lt;/span&gt; wg0 peer &amp;lt;peer2-public-key&amp;gt; allowed-ips &lt;span class="m"&gt;10&lt;/span&gt;.0.0.1/24 endpoint &amp;lt;peer1-pulic-ip&amp;gt;:51820
+ip link &lt;span class="nb"&gt;set&lt;/span&gt; wg0 up
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;h2&gt;Check connectivity&lt;/h2&gt;
+&lt;p&gt;At this point you should be able to ping the other endpoint his 10.0.0.x address after the interface is up.&lt;/p&gt;
+&lt;p&gt;The &lt;code&gt;wg&lt;/code&gt; command should show you some useful output as well.&lt;/p&gt;
+&lt;p&gt;Remember when doing tcpdump and forwarding ports, the connection is over UDP, not TCP!&lt;br&gt;
+Hint if you run with firewalld enabled: &lt;code&gt;firewall-cmd --add-port 51820/udp&lt;/code&gt;, see Additional Settings below to do this automatically.&lt;/p&gt;
+&lt;h2&gt;NAT and Dynamic endpoint IP address&lt;/h2&gt;
+&lt;p&gt;If you are, like me, trying to set up your laptop to connect to a remote server, your public IP will most definitely change a lot.&lt;/p&gt;
+&lt;p&gt;The solution to this is to use Dynamic DNS and use this DNS name in your endpoint configuration.&lt;br&gt;
+Even on Android &lt;a href="https://play.google.com/store/apps/details?id=com.icecoldapps.dynamicdnsupdate"&gt;there is an app for that&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;Also, there is a setting called &lt;code&gt;persistent-keepalive&lt;/code&gt; that will assist firewalls to keep the tunnel alive.&lt;/p&gt;
+&lt;h2&gt;Persistent configuration&lt;/h2&gt;
+&lt;p&gt;The CLI tools are nice and all, but I want the VPN link to come up with my Fedora Server and easily bring up the connection with one commmand on my Workstation.&lt;/p&gt;
+&lt;p&gt;No problem, &lt;code&gt;wg-quick&lt;/code&gt; has got you covered.&lt;/p&gt;
+&lt;p&gt;First export the current config to a file, link it to the device and enable the systemd service (if you want to bring the device up at boot time).&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;wg showconf &amp;gt; /etc/wiregaurd/wg0.conf
+chmod &lt;span class="m"&gt;700&lt;/span&gt; /etc/wireguard/wg0.conf
+wg setconf wg0 /etc/wireguard/wg0.conf
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;You can now easily issue &lt;code&gt;wg-quick up wg0&lt;/code&gt; and &lt;code&gt;wg-quick down wg0&lt;/code&gt;.&lt;br&gt;
+To have it start at boot-time issue &lt;code&gt;systemctl enable wg-quick@wg0&lt;/code&gt;. (make sure you stop it first manually before starting the service)&lt;/p&gt;
+&lt;h1&gt;Android peer&lt;/h1&gt;
+&lt;p&gt;Once you have Dynamic DNS set up on your Android using &lt;a href="https://play.google.com/store/apps/details?id=com.icecoldapps.dynamicdnsupdate"&gt;this app&lt;/a&gt;,&lt;/p&gt;
+&lt;h2&gt;Android app setup&lt;/h2&gt;
+&lt;p&gt;Install the &lt;a href="https://play.google.com/store/apps/details?id=com.wireguard.android"&gt;Wireguard Android app&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;The configuration is pretty straight-forward, but maybe just choose a different port than the one for your laptop, in case you are on the same network.&lt;/p&gt;
+&lt;p&gt;On the &lt;code&gt;allowed-ips&lt;/code&gt; section, specify '0.0.0.0/0. ::0/0' if you want to forward all internet traffic over this VPN (recommended for public WiFi).&lt;/p&gt;
+&lt;h2&gt;Add peer configuration on the server&lt;/h2&gt;
+&lt;p&gt;I added this Peer configuration to the existing &lt;code&gt;wg0.conf&lt;/code&gt; file on the Server:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="k"&gt;[Peer]&lt;/span&gt;
+&lt;span class="c1"&gt;#mobile&lt;/span&gt;
+&lt;span class="na"&gt;PublicKey&lt;/span&gt;           &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="s"&gt;&amp;lt;android-public-key&amp;gt;&lt;/span&gt;
+&lt;span class="na"&gt;AllowedIPs&lt;/span&gt;          &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="s"&gt;10.0.0.3/32&lt;/span&gt;
+&lt;span class="na"&gt;Endpoint&lt;/span&gt;            &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="s"&gt;server.dyndns.com:51821&lt;/span&gt;
+&lt;span class="na"&gt;PersistentKeepalive&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="s"&gt;25&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;When forwarding traffic to the outside, make sure IP forwarding is on.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;sysctl net.ipv4.ip_forward&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;1&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;h1&gt;Additional settings&lt;/h1&gt;
+&lt;p&gt;To have the port and masquerading be set up automatically whenever I bring up the wireguard interface, I added soem &lt;code&gt;PostUp&lt;/code&gt; and &lt;code&gt;PostDown&lt;/code&gt; commands.&lt;/p&gt;
+&lt;p&gt;My Interface Settings on the server are as follows;&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="k"&gt;[Interface]&lt;/span&gt;
+&lt;span class="na"&gt;Address&lt;/span&gt;    &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="s"&gt;10.0.0.1/24&lt;/span&gt;
+&lt;span class="na"&gt;PostUp&lt;/span&gt;     &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="s"&gt;firewall-cmd --add-port 51820/udp &amp;amp;&amp;amp; firewall-cmd --add-rich-rule=&amp;#39;rule family=ipv4 source address=10.0.0.0/24 masquerade&amp;#39;&lt;/span&gt;
+&lt;span class="na"&gt;PostDown&lt;/span&gt;   &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="s"&gt;firewall-cmd --remove-port 51820/udp &amp;amp;&amp;amp; firewall-cmd --remove-rich-rule=&amp;#39;rule family=ipv4 source address=10.0.0.0/24 masquerade&amp;#39;&lt;/span&gt;
+&lt;span class="na"&gt;ListenPort&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="s"&gt;51820&lt;/span&gt;
+&lt;span class="na"&gt;PrivateKey&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="s"&gt;&amp;lt;private-key&amp;gt;&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Now you can enjoy a very fast and easy to maintain VPN configuration on the road, whether it's on your mobile or on your laptop.&lt;/p&gt;
+&lt;h1&gt;More Resources&lt;/h1&gt;
+&lt;ul&gt;
+&lt;li&gt;Wireguard docs for &lt;a href="https://www.wireguard.com/install/"&gt;installation&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;Wireguard docs for &lt;a href="https://www.wireguard.com/install/"&gt;QuickStart setup&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="https://wiki.archlinux.org/index.php/WireGuard"&gt;Arch Wiki&lt;/a&gt; was really helpful, as always.&lt;/li&gt;
+&lt;li&gt;&lt;a href="https://www.rootusers.com/how-to-use-firewalld-rich-rules-and-zones-for-filtering-and-nat/"&gt;Blog post&lt;/a&gt; on firewalld, scroll down to masquerading &lt;/li&gt;
+&lt;/ul&gt;</content><category term="fedora"></category><category term="security"></category><category term="vpn"></category></entry><entry><title>ownCloud 9.1 upgrade on FreeNAS</title><link href="http://aairey.github.io/owncloud-91-upgrade-freenas.html" rel="alternate"></link><published>2016-11-18T14:21:00+01:00</published><updated>2016-11-21T00:13:00+01:00</updated><author><name>Andy Airey</name></author><id>tag:aairey.github.io,2016-11-18:/owncloud-91-upgrade-freenas.html</id><summary type="html">&lt;p&gt;Did the upgrade to 9.1 give you a broken setup too? Here is a small guide to resolve it.&lt;/p&gt;</summary><content type="html">&lt;p&gt;Hello there.&lt;/p&gt;
+&lt;p&gt;I updated my ownCloud FreeNAS plugin to the latest version.&lt;/p&gt;
+&lt;p&gt;After that I did not get my login page back, but I had to continue doing the update manually through the CLI.&lt;/p&gt;
+&lt;p&gt;Below are the steps I took.&lt;/p&gt;
+&lt;p&gt;This might help other people using ownCloud on FreeNAS/FreeBSD.&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;First log in to your FreeNAS box and enter the correct jail&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;jls
+jexec &lt;span class="m"&gt;4&lt;/span&gt; tcsh    &lt;span class="c1"&gt;# in my case jail number 4 was ownCloud&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Then you should go to the owncloud install directory&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="nb"&gt;cd&lt;/span&gt; /usr/pbi/owncloud-amd64/www/owncloud
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Now the following command should be run to conclude the upgrade process (see the official &lt;a href="https://doc.owncloud.org/server/9.1/admin_manual/configuration_server/occ_command.html#command-line-upgrade"&gt;docs&lt;/a&gt;).
+   On FreeBSD it is a little different:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;su -m www -c &lt;span class="s1"&gt;&amp;#39;php occ upgrade&amp;#39;&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;That will give you a bunch of errors, the problem is that php and it's dependencies are not installed.
+   Here are all the dependencies I had to install:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;pkg install php56 php56-ctype php56-gd php56-xmlreader php56-xml php56-zip php56-xmlwriter php56-curl &lt;span class="se"&gt;\&lt;/span&gt;
+            php56-zlib php56-hash php56-mbstring php56-posix php56-pdo php56-sqlite3 php56-pdo_sqlite &lt;span class="se"&gt;\&lt;/span&gt;
+            php56-json php56-simplexml
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;After that I could run the upgrade command without and I got my login prompt back!&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;Disclaimer: I am not a FreeBSD expert, so there might be a cleaner way to do this.&lt;/p&gt;
+&lt;p&gt;I found it really weird that I had to install php56 after a plain update of the ownCloud pbi ...&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Update:&lt;/strong&gt; There is now an &lt;a href="https://forums.freenas.org/index.php?threads/new-plugins-for-freenas-9-november-2016-nextcloud-madsonic-resilio-nzbhydra.47259/"&gt;official NextCloud plugin for FreeNAS&lt;/a&gt;, we should all be using that now. Here's &lt;a href="http://www.techrepublic.com/article/owncloud-founder-has-forked-their-product-into-nextcloud/"&gt;why&lt;/a&gt;.&lt;/p&gt;</content><category term="owncloud"></category><category term="freenas"></category><category term="upgrade"></category></entry><entry><title>certbot renew on FreeBSD</title><link href="http://aairey.github.io/certbot-renew-freebsd.html" rel="alternate"></link><published>2016-08-17T22:27:00+02:00</published><updated>2016-08-17T23:30:00+02:00</updated><author><name>Andy Airey</name></author><id>tag:aairey.github.io,2016-08-17:/certbot-renew-freebsd.html</id><summary type="html">&lt;p&gt;A small post on how to renew a LetsEncrypt certificate in a FreeBSD jail&lt;/p&gt;</summary><content type="html">&lt;p&gt;Hi there,&lt;/p&gt;
+&lt;p&gt;In &lt;a href="../owncloud-letsencrypt"&gt;my last post&lt;/a&gt; I talked about getting a free certificate fron &lt;a href="https://letsencrypt.org/"&gt;LetsEncrypt&lt;/a&gt; using py27-letsencrypt.&lt;/p&gt;
+&lt;p&gt;Turns out I was not using the right package for the job.
+The package &lt;a href="https://certbot.eff.org/docs/using.html"&gt;certbot&lt;/a&gt; is available now and this (also Python) is used in favor of &lt;code&gt;py27-letsencrypt&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;I found out when I wanted to renew my certificate:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;# letsencrypt renew -d your.domain.org
+Currently, the renew verb is only capable of renewing all installed certificates that are due to be renewed; individual domains cannot be specified with this action. If you would like to renew specific certificates, use the certonly command. The renew verb may provide other options for selecting certificates to renew in the future.
+root@owncloud_1:~ # letsencrypt renew
+
+-------------------------------------------------------------------------------
+Processing /usr/local/etc/letsencrypt/renewal/your.domain.org.conf
+-------------------------------------------------------------------------------
+
+-------------------------------------------------------------------------------
+The program httpd (process ID 12020) is already listening on TCP port 80. This
+will prevent us from binding to that port. Please stop the httpd program
+temporarily and then try again. For automated renewal, you may want to use a
+script that stops and starts your webserver. You can find an example at
+https://letsencrypt.org/howitworks/#writing-your-own-renewal-script.
+Alternatively you can use the webroot plugin to renew without needing to stop
+and start your webserver.
+-------------------------------------------------------------------------------
+2016-08-17 20:54:09,442:WARNING:letsencrypt.renewal:Attempting to renew cert from /usr/local/etc/letsencrypt/renewal/your.domain.org.conf produced an unexpected error: At least one of the (possibly) required ports is already taken.. Skipping.
+
+All renewal attempts failed. The following certs could not be renewed:
+  /usr/local/etc/letsencrypt/live/your.domain.org/fullchain.pem (failure)
+1 renew failure(s), 0 parse failure(s)
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Due to the first error, I wondered if my version was out of date.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;pkg update
+pkg upgrade
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Yes there was an update, but after the upgrade it was even worse:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="c1"&gt;# letsencrypt renew --certonly&lt;/span&gt;
+&lt;span class="n"&gt;Traceback&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;most&lt;/span&gt; &lt;span class="n"&gt;recent&lt;/span&gt; &lt;span class="n"&gt;call&lt;/span&gt; &lt;span class="n"&gt;last&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;
+  &lt;span class="n"&gt;File&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;/usr/local/bin/letsencrypt&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;line&lt;/span&gt; &lt;span class="mi"&gt;5&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="ow"&gt;in&lt;/span&gt; &lt;span class="o"&gt;&amp;lt;&lt;/span&gt;&lt;span class="n"&gt;module&lt;/span&gt;&lt;span class="o"&gt;&amp;gt;&lt;/span&gt;
+    &lt;span class="kn"&gt;from&lt;/span&gt; &lt;span class="nn"&gt;pkg_resources&lt;/span&gt; &lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="n"&gt;load_entry_point&lt;/span&gt;
+  &lt;span class="n"&gt;File&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;/usr/local/lib/python2.7/site-packages/pkg_resources/__init__.py&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;line&lt;/span&gt; &lt;span class="mi"&gt;2927&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="ow"&gt;in&lt;/span&gt; &lt;span class="o"&gt;&amp;lt;&lt;/span&gt;&lt;span class="n"&gt;module&lt;/span&gt;&lt;span class="o"&gt;&amp;gt;&lt;/span&gt;
+    &lt;span class="nd"&gt;@_call_aside&lt;/span&gt;
+  &lt;span class="n"&gt;File&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;/usr/local/lib/python2.7/site-packages/pkg_resources/__init__.py&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;line&lt;/span&gt; &lt;span class="mi"&gt;2913&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="ow"&gt;in&lt;/span&gt; &lt;span class="n"&gt;_call_aside&lt;/span&gt;
+    &lt;span class="n"&gt;f&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;args&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="o"&gt;**&lt;/span&gt;&lt;span class="n"&gt;kwargs&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+  &lt;span class="n"&gt;File&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;/usr/local/lib/python2.7/site-packages/pkg_resources/__init__.py&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;line&lt;/span&gt; &lt;span class="mi"&gt;2940&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="ow"&gt;in&lt;/span&gt; &lt;span class="n"&gt;_initialize_master_working_set&lt;/span&gt;
+    &lt;span class="n"&gt;working_set&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;WorkingSet&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;_build_master&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;
+  &lt;span class="n"&gt;File&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;/usr/local/lib/python2.7/site-packages/pkg_resources/__init__.py&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;line&lt;/span&gt; &lt;span class="mi"&gt;637&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="ow"&gt;in&lt;/span&gt; &lt;span class="n"&gt;_build_master&lt;/span&gt;
+    &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="bp"&gt;cls&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;_build_from_requirements&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;__requires__&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+  &lt;span class="n"&gt;File&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;/usr/local/lib/python2.7/site-packages/pkg_resources/__init__.py&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;line&lt;/span&gt; &lt;span class="mi"&gt;650&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="ow"&gt;in&lt;/span&gt; &lt;span class="n"&gt;_build_from_requirements&lt;/span&gt;
+    &lt;span class="n"&gt;dists&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;ws&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;resolve&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;reqs&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;Environment&lt;/span&gt;&lt;span class="p"&gt;())&lt;/span&gt;
+  &lt;span class="n"&gt;File&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;/usr/local/lib/python2.7/site-packages/pkg_resources/__init__.py&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;line&lt;/span&gt; &lt;span class="mi"&gt;829&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="ow"&gt;in&lt;/span&gt; &lt;span class="n"&gt;resolve&lt;/span&gt;
+    &lt;span class="k"&gt;raise&lt;/span&gt; &lt;span class="n"&gt;DistributionNotFound&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;req&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;requirers&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="n"&gt;pkg_resources&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;DistributionNotFound&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="n"&gt;The&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;acme==0.5.0&amp;#39;&lt;/span&gt; &lt;span class="n"&gt;distribution&lt;/span&gt; &lt;span class="n"&gt;was&lt;/span&gt; &lt;span class="ow"&gt;not&lt;/span&gt; &lt;span class="n"&gt;found&lt;/span&gt; &lt;span class="ow"&gt;and&lt;/span&gt; &lt;span class="ow"&gt;is&lt;/span&gt; &lt;span class="n"&gt;required&lt;/span&gt; &lt;span class="n"&gt;by&lt;/span&gt; &lt;span class="n"&gt;letsencrypt&lt;/span&gt;
+&lt;span class="n"&gt;root&lt;/span&gt;&lt;span class="nd"&gt;@owncloud_1&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="o"&gt;~&lt;/span&gt; &lt;span class="c1"&gt;# letsencrypt&lt;/span&gt;
+&lt;span class="n"&gt;Traceback&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;most&lt;/span&gt; &lt;span class="n"&gt;recent&lt;/span&gt; &lt;span class="n"&gt;call&lt;/span&gt; &lt;span class="n"&gt;last&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;
+  &lt;span class="n"&gt;File&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;/usr/local/bin/letsencrypt&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;line&lt;/span&gt; &lt;span class="mi"&gt;5&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="ow"&gt;in&lt;/span&gt; &lt;span class="o"&gt;&amp;lt;&lt;/span&gt;&lt;span class="n"&gt;module&lt;/span&gt;&lt;span class="o"&gt;&amp;gt;&lt;/span&gt;
+    &lt;span class="kn"&gt;from&lt;/span&gt; &lt;span class="nn"&gt;pkg_resources&lt;/span&gt; &lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="n"&gt;load_entry_point&lt;/span&gt;
+  &lt;span class="n"&gt;File&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;/usr/local/lib/python2.7/site-packages/pkg_resources/__init__.py&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;line&lt;/span&gt; &lt;span class="mi"&gt;2927&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="ow"&gt;in&lt;/span&gt; &lt;span class="o"&gt;&amp;lt;&lt;/span&gt;&lt;span class="n"&gt;module&lt;/span&gt;&lt;span class="o"&gt;&amp;gt;&lt;/span&gt;
+    &lt;span class="nd"&gt;@_call_aside&lt;/span&gt;
+  &lt;span class="n"&gt;File&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;/usr/local/lib/python2.7/site-packages/pkg_resources/__init__.py&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;line&lt;/span&gt; &lt;span class="mi"&gt;2913&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="ow"&gt;in&lt;/span&gt; &lt;span class="n"&gt;_call_aside&lt;/span&gt;
+    &lt;span class="n"&gt;f&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;args&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="o"&gt;**&lt;/span&gt;&lt;span class="n"&gt;kwargs&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+  &lt;span class="n"&gt;File&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;/usr/local/lib/python2.7/site-packages/pkg_resources/__init__.py&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;line&lt;/span&gt; &lt;span class="mi"&gt;2940&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="ow"&gt;in&lt;/span&gt; &lt;span class="n"&gt;_initialize_master_working_set&lt;/span&gt;
+    &lt;span class="n"&gt;working_set&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;WorkingSet&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;_build_master&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;
+  &lt;span class="n"&gt;File&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;/usr/local/lib/python2.7/site-packages/pkg_resources/__init__.py&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;line&lt;/span&gt; &lt;span class="mi"&gt;637&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="ow"&gt;in&lt;/span&gt; &lt;span class="n"&gt;_build_master&lt;/span&gt;
+    &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="bp"&gt;cls&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;_build_from_requirements&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;__requires__&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+  &lt;span class="n"&gt;File&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;/usr/local/lib/python2.7/site-packages/pkg_resources/__init__.py&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;line&lt;/span&gt; &lt;span class="mi"&gt;650&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="ow"&gt;in&lt;/span&gt; &lt;span class="n"&gt;_build_from_requirements&lt;/span&gt;
+    &lt;span class="n"&gt;dists&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;ws&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;resolve&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;reqs&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;Environment&lt;/span&gt;&lt;span class="p"&gt;())&lt;/span&gt;
+  &lt;span class="n"&gt;File&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;/usr/local/lib/python2.7/site-packages/pkg_resources/__init__.py&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;line&lt;/span&gt; &lt;span class="mi"&gt;829&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="ow"&gt;in&lt;/span&gt; &lt;span class="n"&gt;resolve&lt;/span&gt;
+    &lt;span class="k"&gt;raise&lt;/span&gt; &lt;span class="n"&gt;DistributionNotFound&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;req&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;requirers&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="n"&gt;pkg_resources&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;DistributionNotFound&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="n"&gt;The&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;acme==0.5.0&amp;#39;&lt;/span&gt; &lt;span class="n"&gt;distribution&lt;/span&gt; &lt;span class="n"&gt;was&lt;/span&gt; &lt;span class="ow"&gt;not&lt;/span&gt; &lt;span class="n"&gt;found&lt;/span&gt; &lt;span class="ow"&gt;and&lt;/span&gt; &lt;span class="ow"&gt;is&lt;/span&gt; &lt;span class="n"&gt;required&lt;/span&gt; &lt;span class="n"&gt;by&lt;/span&gt; &lt;span class="n"&gt;letsencrypt&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;After some googling, it seemed I needed letsencrypt-auto or certbot-auto, both not available through the package manager in FreeBSD. So not really my preference.&lt;/p&gt;
+&lt;p&gt;I found &lt;a href="https://certbot.eff.org/all-instructions/#freebsd-apache"&gt;this page&lt;/a&gt; so I installed plain certbot&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;pkg search certbot
+pkg install certbot
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Turns out this was requiring the same &lt;code&gt;acme&lt;/code&gt; dependency and version:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;# certbot
+An unexpected error occurred:
+VersionConflict: (acme 0.8.1 (/usr/local/lib/python2.7/site-packages), Requirement.parse(&amp;#39;acme==0.5.0&amp;#39;))
+Please see the logfile &amp;#39;certbot.log&amp;#39; for more details.
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;I then found &lt;a href="https://github.com/certbot/certbot/issues/3221"&gt;this solution&lt;/a&gt; and uninstalled it with &lt;code&gt;pip&lt;/code&gt;:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;pip uninstall letsencrypt
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;I could then do a renew &lt;a href="https://certbot.eff.org/docs/using.html"&gt;as follows&lt;/a&gt;:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;# certbot renew --dry-run
+
+-------------------------------------------------------------------------------
+Processing /usr/local/etc/letsencrypt/renewal/your.domain.org.conf
+-------------------------------------------------------------------------------
+
+-------------------------------------------------------------------------------
+The program httpd (process ID 12020) is already listening on TCP port 80. This
+will prevent us from binding to that port. Please stop the httpd program
+temporarily and then try again. For automated renewal, you may want to use a
+script that stops and starts your webserver. You can find an example at
+https://letsencrypt.org/howitworks/#writing-your-own-renewal-script.
+Alternatively you can use the webroot plugin to renew without needing to stop
+and start your webserver.
+-------------------------------------------------------------------------------
+2016-08-17 21:52:47,093:WARNING:certbot.renewal:Attempting to renew cert from /usr/local/etc/letsencrypt/renewal/your.domain.org.conf produced an unexpected error: At least one of the (possibly) required ports is already taken.. Skipping.
+** DRY RUN: simulating &amp;#39;certbot renew&amp;#39; close to cert expiry
+**          (The test certificates below have not been saved.)
+
+All renewal attempts failed. The following certs could not be renewed:
+  /usr/local/etc/letsencrypt/live/your.domain.org/fullchain.pem (failure)
+** DRY RUN: simulating &amp;#39;certbot renew&amp;#39; close to cert expiry
+**          (The test certificates above have not been saved.)
+1 renew failure(s), 0 parse failure(s)
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;So it tries to run it's own webserver and auto-approve the renewal this way by connecting to it.
+This is of course not possible when Apache is running and using the same port on the system.
+It is possible to specify a &lt;a href="https://community.letsencrypt.org/t/le-client-needs-to-bind-to-port-80-which-im-already-using/2739/10"&gt;different port&lt;/a&gt;, but then you need to set up a NAT/Proxy rule to this port so that it is accessible through standard HTTP on port 80.&lt;/p&gt;
+&lt;p&gt;This is not a production server so I wrapped it with these hooks (as recommended):&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;certbot renew --standalone --pre-hook &amp;quot;/usr/pbi/owncloud-amd64/etc/rc.d/apache24 stop&amp;quot; --post-hook &amp;quot;/usr/pbi/owncloud-amd64/etc/rc.d/apache24 start&amp;quot; --dry-run
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;The dry-run was succesful! (in retrospect - could've done this with the original &lt;code&gt;py27-letsencrypt&lt;/code&gt; too ...)
+Finally, I set up crontab to take care of this for me in the future:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;0 3 1 */3 * root certbot renew --standalone --pre-hook &amp;quot;/usr/pbi/owncloud-amd64/etc/rc.d/apache24 stop&amp;quot; --post-hook &amp;quot;/usr/pbi/owncloud-amd64/etc/rc.d/apache24 start&amp;quot;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;This will check and renew the cert every 3 (1st of Jan, Apr, Jul, Oct).&lt;/p&gt;
+&lt;p&gt;Future-you will thank you!&lt;/p&gt;</content><category term="owncloud"></category><category term="security"></category><category term="letsencrypt"></category><category term="freenas"></category><category term="cerbot"></category><category term="jails"></category></entry><entry><title>letsencrypt and OwnCloud</title><link href="http://aairey.github.io/owncloud-letsencrypt.html" rel="alternate"></link><published>2016-07-07T22:20:00+02:00</published><updated>2016-08-01T23:52:00+02:00</updated><author><name>Andy Airey</name></author><id>tag:aairey.github.io,2016-07-07:/owncloud-letsencrypt.html</id><summary type="html">&lt;p&gt;A small post on how to set up ownCloud to use a letsencrypt certificate within a FreeNAS jail&lt;/p&gt;</summary><content type="html">&lt;p&gt;Hello there.&lt;/p&gt;
+&lt;p&gt;Recently I was in the need of an SSL certificate for my personal &lt;a href="https://owncloud.org/"&gt;ownCloud&lt;/a&gt; server.
+On my setup, ownCloud runs as a &lt;a href="https://doc.freenas.org/9.10/freenas_plugins.html#installing-plugins"&gt;plugin for FreeNAS 9.10&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;At the time of writing &lt;a href="https://letsencrypt.org/2016/04/12/leaving-beta-new-sponsors.html"&gt;letsencrypt was out of beta&lt;/a&gt; for some months and I decided to give it a go.
+I've had good experience with &lt;a href="https://www.startssl.com/"&gt;StartSSL&lt;/a&gt; and their free certificate for one hostname, but I've been following the letsencrypt developments and I really stand behind what they are doing.&lt;/p&gt;
+&lt;p&gt;I have to say I was somewhat surprised by the results. It was really easy to set up and the certificate was trusted, no problem. Even &lt;a href="https://www.ssllabs.com/"&gt;SSL Labs&lt;/a&gt; didn't complain :).&lt;/p&gt;
+&lt;p&gt;Here's how I did it.&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;On your FreeNAS host, find out which jail is runing owncloud and enter it:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;jls
+jexec &lt;span class="m"&gt;3&lt;/span&gt; tcsh
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Install the needed packages within this jail:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;pkg install py27-letsencrypt
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Stop apache and start the setup wizard:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;/usr/pbi/owncloud-amd64/etc/rc.d/apache24 stop
+letsencrypt certonly
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Softlink the new certs from the apache directory (replace your.domain.org with the domain name from step 3)&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;/usr/pbi/owncloud-amd64/etc/rc.d/apache24 start
+&lt;span class="nb"&gt;cd&lt;/span&gt; /usr/pbi/owncloud-amd64/etc/apache24/
+ln -s /usr/local/etc/letsencrypt/live/your.domain.org/cert.pem letsencrypt.crt
+ln -s /usr/local/etc/letsencrypt/live/your.domain.org/privkey.pem letsencrypt.key
+ln -s /usr/local/etc/letsencrypt/live/your.domain.org/chain.pem letsencrypt_chain.crt
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;edit &lt;code&gt;extra/httpd-ssl.conf&lt;/code&gt; and change it so that&lt;/p&gt;
+&lt;table class="highlighttable"&gt;&lt;tr&gt;&lt;td class="linenos"&gt;&lt;div class="linenodiv"&gt;&lt;pre&gt;1
+2
+3
+4
+5
+6
+7&lt;/pre&gt;&lt;/div&gt;&lt;/td&gt;&lt;td class="code"&gt;&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="nb"&gt;SSLProtocol&lt;/span&gt; &lt;span class="k"&gt;all&lt;/span&gt; -SSLv2 -SSLv3
+&lt;span class="nb"&gt;SSLHonorCipherOrder&lt;/span&gt; &lt;span class="k"&gt;on&lt;/span&gt;
+&lt;span class="nb"&gt;SSLCipherSuite&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;EECDH+ECDSA+AESGCM EECDH+aRSA+AESGCM EECDH+ECDSA+SHA384 EECDH+ECDSA+SHA256 EECDH+aRSA+SHA384 EECDH+aRSA+SHA256 EECDH+aRSA+RC4 EECDH EDH+aRSA RC4 !aNULL !eNULL !LOW !3DES !MD5 !EXP !PSK !SRP !DSS&amp;quot;&lt;/span&gt;
+
+&lt;span class="nb"&gt;SSLCertificateFile&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;/usr/pbi/owncloud-amd64/etc/apache24/letsencrypt.crt&amp;quot;&lt;/span&gt;
+&lt;span class="nb"&gt;SSLCertificateKeyFile&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;/usr/pbi/owncloud-amd64/etc/apache24/letsencrypt.key&amp;quot;&lt;/span&gt;
+&lt;span class="nb"&gt;SSLCACertificateFile&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;/usr/pbi/owncloud-amd64/etc/apache24/letsencrypt_chain.crt&amp;quot;&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Restart Apache HTTPD:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;../rc.d/apache24 restart
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Check the logs for errors:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;tail /var/log/httpd-error.log
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;/li&gt;
+&lt;/ol&gt;</content><category term="owncloud"></category><category term="security"></category><category term="letsencrypt"></category><category term="freenas"></category></entry></feed>
