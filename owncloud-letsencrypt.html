@@ -20,10 +20,20 @@
     <link href="https://blog.airey.be/feeds/all.atom.xml" type="application/atom+xml" rel="alternate" title="blog.airey.be Atom">
 
 
-    <link rel="shortcut icon" href="https://blog.airey.be/images/favicon.ico" type="image/x-icon">
-    <link rel="icon" href="https://blog.airey.be/images/favicon.ico" type="image/x-icon">
+    <link rel="shortcut icon" href="http://localhost:8000/images/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="http://localhost:8000/images/favicon.ico" type="image/x-icon">
 
+<!-- Google Analytics -->
+<script type="text/javascript">
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
 
+  ga('create', 'UA-125578210-1', 'auto');
+  ga('send', 'pageview');
+</script>
+<!-- End Google Analytics -->
     <!-- Chrome, Firefox OS and Opera -->
     <meta name="theme-color" content="#333333">
     <!-- Windows Phone -->
@@ -35,12 +45,12 @@
     <meta name="msapplication-TileColor" content="#333333">
 
 <meta name="author" content="Andy Airey" />
-<meta name="description" content="A small post on how to set up ownCloud to use a letsencrypt certificate within a FreeNAS jail" />
+<meta name="description" content="A small post on how to set up ownCloud to use a letsencrypt certificate within a FreeNAS jail" />
 <meta name="keywords" content="owncloud, security, letsencrypt, freenas">
 
 <meta property="og:site_name" content="blog.airey.be"/>
-<meta property="og:title" content="letsencrypt and OwnCloud"/>
-<meta property="og:description" content="A small post on how to set up ownCloud to use a letsencrypt certificate within a FreeNAS jail"/>
+<meta property="og:title" content="letsencrypt and OwnCloud"/>
+<meta property="og:description" content="A small post on how to set up ownCloud to use a letsencrypt certificate within a FreeNAS jail"/>
 <meta property="og:locale" content="en_US"/>
 <meta property="og:url" content="https://blog.airey.be/owncloud-letsencrypt.html"/>
 <meta property="og:type" content="article"/>
@@ -54,7 +64,7 @@
 <meta property="article:tag" content="freenas"/>
 <meta property="og:image" content="//en.gravatar.com/userimage/33572940/d1226e18865ebdb31edc84661c5abaa3.jpeg">
 
-  <title>blog.airey.be &ndash; letsencrypt and OwnCloud</title>
+  <title>blog.airey.be &ndash; letsencrypt and OwnCloud</title>
 
 </head>
 <body>
@@ -102,7 +112,7 @@
 <article class="single">
   <header>
       
-    <h1 id="owncloud-letsencrypt">letsencrypt and OwnCloud</h1>
+    <h1 id="owncloud-letsencrypt">letsencrypt and&nbsp;OwnCloud</h1>
     <p>
           Posted on Thu 07 July 2016 in <a href="https://blog.airey.be/category/homelab.html">homelab</a>
 
@@ -112,16 +122,16 @@
 
 
   <div>
-    <p>Hello there.</p>
-<p>Recently I was in the need of an SSL certificate for my personal <a href="https://owncloud.org/">ownCloud</a> server.
+    <p>Hello&nbsp;there.</p>
+<p>Recently I was in the need of an <span class="caps">SSL</span> certificate for my personal <a href="https://owncloud.org/">ownCloud</a> server.
 On my setup, ownCloud runs as a <a href="https://doc.freenas.org/9.10/freenas_plugins.html#installing-plugins">plugin for FreeNAS 9.10</a>.</p>
 <p>At the time of writing <a href="https://letsencrypt.org/2016/04/12/leaving-beta-new-sponsors.html">letsencrypt was out of beta</a> for some months and I decided to give it a go.
-I've had good experience with <a href="https://www.startssl.com/">StartSSL</a> and their free certificate for one hostname, but I've been following the letsencrypt developments and I really stand behind what they are doing.</p>
-<p>I have to say I was somewhat surprised by the results. It was really easy to set up and the certificate was trusted, no problem. Even <a href="https://www.ssllabs.com/">SSL Labs</a> didn't complain :).</p>
-<p>Here's how I did it.</p>
+I&#8217;ve had good experience with <a href="https://www.startssl.com/">StartSSL</a> and their free certificate for one hostname, but I&#8217;ve been following the letsencrypt developments and I really stand behind what they are&nbsp;doing.</p>
+<p>I have to say I was somewhat surprised by the results. It was really easy to set up and the certificate was trusted, no problem. Even <a href="https://www.ssllabs.com/"><span class="caps">SSL</span> Labs</a> didn&#8217;t complain&nbsp;:).</p>
+<p>Here&#8217;s how I did&nbsp;it.</p>
 <ol>
 <li>
-<p>On your FreeNAS host, find out which jail is runing owncloud and enter it:</p>
+<p>On your FreeNAS host, find out which jail is runing owncloud and enter&nbsp;it:</p>
 <div class="highlight"><pre><span></span>jls
 jexec <span class="m">3</span> tcsh
 </pre></div>
@@ -129,14 +139,14 @@ jexec <span class="m">3</span> tcsh
 
 </li>
 <li>
-<p>Install the needed packages within this jail:</p>
+<p>Install the needed packages within this&nbsp;jail:</p>
 <div class="highlight"><pre><span></span>pkg install py27-letsencrypt
 </pre></div>
 
 
 </li>
 <li>
-<p>Stop apache and start the setup wizard:</p>
+<p>Stop apache and start the setup&nbsp;wizard:</p>
 <div class="highlight"><pre><span></span>/usr/pbi/owncloud-amd64/etc/rc.d/apache24 stop
 letsencrypt certonly
 </pre></div>
@@ -144,7 +154,7 @@ letsencrypt certonly
 
 </li>
 <li>
-<p>Softlink the new certs from the apache directory (replace your.domain.org with the domain name from step 3)</p>
+<p>Softlink the new certs from the apache directory (replace your.domain.org with the domain name from step&nbsp;3)</p>
 <div class="highlight"><pre><span></span>/usr/pbi/owncloud-amd64/etc/rc.d/apache24 start
 <span class="nb">cd</span> /usr/pbi/owncloud-amd64/etc/apache24/
 ln -s /usr/local/etc/letsencrypt/live/your.domain.org/cert.pem letsencrypt.crt
@@ -155,7 +165,7 @@ ln -s /usr/local/etc/letsencrypt/live/your.domain.org/chain.pem letsencrypt_chai
 
 </li>
 <li>
-<p>edit <code>extra/httpd-ssl.conf</code> and change it so that</p>
+<p>edit <code>extra/httpd-ssl.conf</code> and change it so&nbsp;that</p>
 <table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
 2
 3
@@ -174,14 +184,14 @@ ln -s /usr/local/etc/letsencrypt/live/your.domain.org/chain.pem letsencrypt_chai
 
 </li>
 <li>
-<p>Restart Apache HTTPD:</p>
+<p>Restart Apache <span class="caps">HTTPD</span>:</p>
 <div class="highlight"><pre><span></span>../rc.d/apache24 restart
 </pre></div>
 
 
 </li>
 <li>
-<p>Check the logs for errors:</p>
+<p>Check the logs for&nbsp;errors:</p>
 <div class="highlight"><pre><span></span>tail /var/log/httpd-error.log
 </pre></div>
 
@@ -220,7 +230,7 @@ ln -s /usr/local/etc/letsencrypt/live/your.domain.org/chain.pem letsencrypt_chai
 </article>
 
     <footer>
-<p>&copy;  2016</p>
+<p>&copy;  2018</p>
 <p>    Powered by <a href="http://getpelican.com" target="_blank">Pelican</a> - <a href="https://github.com/alexandrevicenzi/flex" target="_blank">Flex</a> theme by <a href="http://alexandrevicenzi.com" target="_blank">Alexandre Vicenzi</a>
 </p>    </footer>
   </main>

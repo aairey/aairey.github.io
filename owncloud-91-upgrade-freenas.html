@@ -20,10 +20,20 @@
     <link href="https://blog.airey.be/feeds/all.atom.xml" type="application/atom+xml" rel="alternate" title="blog.airey.be Atom">
 
 
-    <link rel="shortcut icon" href="https://blog.airey.be/images/favicon.ico" type="image/x-icon">
-    <link rel="icon" href="https://blog.airey.be/images/favicon.ico" type="image/x-icon">
+    <link rel="shortcut icon" href="http://localhost:8000/images/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="http://localhost:8000/images/favicon.ico" type="image/x-icon">
 
+<!-- Google Analytics -->
+<script type="text/javascript">
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
 
+  ga('create', 'UA-125578210-1', 'auto');
+  ga('send', 'pageview');
+</script>
+<!-- End Google Analytics -->
     <!-- Chrome, Firefox OS and Opera -->
     <meta name="theme-color" content="#333333">
     <!-- Windows Phone -->
@@ -35,12 +45,12 @@
     <meta name="msapplication-TileColor" content="#333333">
 
 <meta name="author" content="Andy Airey" />
-<meta name="description" content="Did the upgrade to 9.1 give you a broken setup too? Here is a small guide to resolve it." />
+<meta name="description" content="Did the upgrade to 9.1 give you a broken setup too? Here is a small guide to resolve it." />
 <meta name="keywords" content="owncloud, freenas, upgrade">
 
 <meta property="og:site_name" content="blog.airey.be"/>
-<meta property="og:title" content="ownCloud 9.1 upgrade on FreeNAS"/>
-<meta property="og:description" content="Did the upgrade to 9.1 give you a broken setup too? Here is a small guide to resolve it."/>
+<meta property="og:title" content="ownCloud 9.1 upgrade on FreeNAS"/>
+<meta property="og:description" content="Did the upgrade to 9.1 give you a broken setup too? Here is a small guide to resolve it."/>
 <meta property="og:locale" content="en_US"/>
 <meta property="og:url" content="https://blog.airey.be/owncloud-91-upgrade-freenas.html"/>
 <meta property="og:type" content="article"/>
@@ -53,7 +63,7 @@
 <meta property="article:tag" content="upgrade"/>
 <meta property="og:image" content="//en.gravatar.com/userimage/33572940/d1226e18865ebdb31edc84661c5abaa3.jpeg">
 
-  <title>blog.airey.be &ndash; ownCloud 9.1 upgrade on FreeNAS</title>
+  <title>blog.airey.be &ndash; ownCloud 9.1 upgrade on FreeNAS</title>
 
 </head>
 <body>
@@ -101,7 +111,7 @@
 <article class="single">
   <header>
       
-    <h1 id="owncloud-91-upgrade-freenas">ownCloud 9.1 upgrade on FreeNAS</h1>
+    <h1 id="owncloud-91-upgrade-freenas">ownCloud 9.1 upgrade on&nbsp;FreeNAS</h1>
     <p>
           Posted on Fri 18 November 2016 in <a href="https://blog.airey.be/category/homelab.html">homelab</a>
 
@@ -111,14 +121,14 @@
 
 
   <div>
-    <p>Hello there.</p>
-<p>I updated my ownCloud FreeNAS plugin to the latest version.</p>
-<p>After that I did not get my login page back, but I had to continue doing the update manually through the CLI.</p>
-<p>Below are the steps I took.</p>
-<p>This might help other people using ownCloud on FreeNAS/FreeBSD.</p>
+    <p>Hello&nbsp;there.</p>
+<p>I updated my ownCloud FreeNAS plugin to the latest&nbsp;version.</p>
+<p>After that I did not get my login page back, but I had to continue doing the update manually through the <span class="caps">CLI</span>.</p>
+<p>Below are the steps I&nbsp;took.</p>
+<p>This might help other people using ownCloud on&nbsp;FreeNAS/FreeBSD.</p>
 <ol>
 <li>
-<p>First log in to your FreeNAS box and enter the correct jail</p>
+<p>First log in to your FreeNAS box and enter the correct&nbsp;jail</p>
 <div class="highlight"><pre><span></span>jls
 jexec <span class="m">4</span> tcsh    <span class="c1"># in my case jail number 4 was ownCloud</span>
 </pre></div>
@@ -126,7 +136,7 @@ jexec <span class="m">4</span> tcsh    <span class="c1"># in my case jail number
 
 </li>
 <li>
-<p>Then you should go to the owncloud install directory</p>
+<p>Then you should go to the owncloud install&nbsp;directory</p>
 <div class="highlight"><pre><span></span><span class="nb">cd</span> /usr/pbi/owncloud-amd64/www/owncloud
 </pre></div>
 
@@ -134,15 +144,15 @@ jexec <span class="m">4</span> tcsh    <span class="c1"># in my case jail number
 </li>
 <li>
 <p>Now the following command should be run to conclude the upgrade process (see the official <a href="https://doc.owncloud.org/server/9.1/admin_manual/configuration_server/occ_command.html#command-line-upgrade">docs</a>).
-   On FreeBSD it is a little different:</p>
+   On FreeBSD it is a little&nbsp;different:</p>
 <div class="highlight"><pre><span></span>su -m www -c <span class="s1">&#39;php occ upgrade&#39;</span>
 </pre></div>
 
 
 </li>
 <li>
-<p>That will give you a bunch of errors, the problem is that php and it's dependencies are not installed.
-   Here are all the dependencies I had to install:</p>
+<p>That will give you a bunch of errors, the problem is that php and it&#8217;s dependencies are not installed.
+   Here are all the dependencies I had to&nbsp;install:</p>
 <div class="highlight"><pre><span></span>pkg install php56 php56-ctype php56-gd php56-xmlreader php56-xml php56-zip php56-xmlwriter php56-curl <span class="se">\</span>
             php56-zlib php56-hash php56-mbstring php56-posix php56-pdo php56-sqlite3 php56-pdo_sqlite <span class="se">\</span>
             php56-json php56-simplexml
@@ -151,12 +161,12 @@ jexec <span class="m">4</span> tcsh    <span class="c1"># in my case jail number
 
 </li>
 <li>
-<p>After that I could run the upgrade command without and I got my login prompt back!</p>
+<p>After that I could run the upgrade command without and I got my login prompt&nbsp;back!</p>
 </li>
 </ol>
-<p>Disclaimer: I am not a FreeBSD expert, so there might be a cleaner way to do this.</p>
-<p>I found it really weird that I had to install php56 after a plain update of the ownCloud pbi ...</p>
-<p><strong>Update:</strong> There is now an <a href="https://forums.freenas.org/index.php?threads/new-plugins-for-freenas-9-november-2016-nextcloud-madsonic-resilio-nzbhydra.47259/">official NextCloud plugin for FreeNAS</a>, we should all be using that now. Here's <a href="http://www.techrepublic.com/article/owncloud-founder-has-forked-their-product-into-nextcloud/">why</a>.</p>
+<p>Disclaimer: I am not a FreeBSD expert, so there might be a cleaner way to do&nbsp;this.</p>
+<p>I found it really weird that I had to install php56 after a plain update of the ownCloud pbi&nbsp;&#8230;</p>
+<p><strong>Update:</strong> There is now an <a href="https://forums.freenas.org/index.php?threads/new-plugins-for-freenas-9-november-2016-nextcloud-madsonic-resilio-nzbhydra.47259/">official NextCloud plugin for FreeNAS</a>, we should all be using that now. Here&#8217;s <a href="http://www.techrepublic.com/article/owncloud-founder-has-forked-their-product-into-nextcloud/">why</a>.</p>
   </div>
   <div class="tag-cloud">
     <p>
@@ -188,7 +198,7 @@ jexec <span class="m">4</span> tcsh    <span class="c1"># in my case jail number
 </article>
 
     <footer>
-<p>&copy;  2016</p>
+<p>&copy;  2018</p>
 <p>    Powered by <a href="http://getpelican.com" target="_blank">Pelican</a> - <a href="https://github.com/alexandrevicenzi/flex" target="_blank">Flex</a> theme by <a href="http://alexandrevicenzi.com" target="_blank">Alexandre Vicenzi</a>
 </p>    </footer>
   </main>

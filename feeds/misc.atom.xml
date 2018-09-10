@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>blog.airey.be - misc</title><link href="https://blog.airey.be/" rel="alternate"></link><link href="https://blog.airey.be/feeds/misc.atom.xml" rel="self"></link><id>https://blog.airey.be/</id><updated>2016-07-06T00:49:00+02:00</updated><entry><title>My First Post</title><link href="https://blog.airey.be/first-post.html" rel="alternate"></link><published>2016-07-06T00:49:00+02:00</published><updated>2016-07-06T00:49:00+02:00</updated><author><name>Andy Airey</name></author><id>tag:blog.airey.be,2016-07-06:/first-post.html</id><summary type="html">&lt;p&gt;First Post to this blog&lt;/p&gt;</summary><content type="html">&lt;p&gt;So, my first post on this blog.&lt;/p&gt;
-&lt;p&gt;Let's not make any promises here, but a frequency of one post a month would already be high above my expectations of myself. :)&lt;/p&gt;
-&lt;p&gt;As some may know I've tried a few other blogs but gave up on writing.
-Let's see where this takes us ...&lt;/p&gt;
+<feed xmlns="http://www.w3.org/2005/Atom"><title>blog.airey.be - misc</title><link href="https://blog.airey.be/" rel="alternate"></link><link href="https://blog.airey.be/feeds/misc.atom.xml" rel="self"></link><id>https://blog.airey.be/</id><updated>2016-07-06T00:49:00+02:00</updated><entry><title>My First Post</title><link href="https://blog.airey.be/first-post.html" rel="alternate"></link><published>2016-07-06T00:49:00+02:00</published><updated>2016-07-06T00:49:00+02:00</updated><author><name>Andy Airey</name></author><id>tag:blog.airey.be,2016-07-06:/first-post.html</id><summary type="html">&lt;p&gt;First Post to this&amp;nbsp;blog&lt;/p&gt;</summary><content type="html">&lt;p&gt;So, my first post on this&amp;nbsp;blog.&lt;/p&gt;
+&lt;p&gt;Let&amp;#8217;s not make any promises here, but a frequency of one post a month would already be high above my expectations of myself.&amp;nbsp;:)&lt;/p&gt;
+&lt;p&gt;As some may know I&amp;#8217;ve tried a few other blogs but gave up on writing.
+Let&amp;#8217;s see where this takes us&amp;nbsp;&amp;#8230;&lt;/p&gt;
 &lt;p&gt;I chose pelican as a static site generator because it uses Python.
-I preferred this over Jekyll's Ruby for example.&lt;/p&gt;
-&lt;p&gt;If you're interested in my setup, I basicly did something similar to &lt;a href="https://fedoramagazine.org/make-github-pages-blog-with-pelican/"&gt;this&lt;/a&gt;.&lt;/p&gt;
-&lt;p&gt;That's all for now.
-See you around!&lt;/p&gt;</content><category term="pelican"></category><category term="python"></category></entry></feed>
+I preferred this over Jekyll&amp;#8217;s Ruby for&amp;nbsp;example.&lt;/p&gt;
+&lt;p&gt;If you&amp;#8217;re interested in my setup, I basicly did something similar to &lt;a href="https://fedoramagazine.org/make-github-pages-blog-with-pelican/"&gt;this&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;That&amp;#8217;s all for now.
+See you&amp;nbsp;around!&lt;/p&gt;</content><category term="pelican"></category><category term="python"></category></entry></feed>

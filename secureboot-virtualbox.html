@@ -20,10 +20,20 @@
     <link href="https://blog.airey.be/feeds/all.atom.xml" type="application/atom+xml" rel="alternate" title="blog.airey.be Atom">
 
 
-    <link rel="shortcut icon" href="https://blog.airey.be/images/favicon.ico" type="image/x-icon">
-    <link rel="icon" href="https://blog.airey.be/images/favicon.ico" type="image/x-icon">
+    <link rel="shortcut icon" href="http://localhost:8000/images/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="http://localhost:8000/images/favicon.ico" type="image/x-icon">
 
+<!-- Google Analytics -->
+<script type="text/javascript">
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
 
+  ga('create', 'UA-125578210-1', 'auto');
+  ga('send', 'pageview');
+</script>
+<!-- End Google Analytics -->
     <!-- Chrome, Firefox OS and Opera -->
     <meta name="theme-color" content="#333333">
     <!-- Windows Phone -->
@@ -35,12 +45,12 @@
     <meta name="msapplication-TileColor" content="#333333">
 
 <meta name="author" content="Andy Airey" />
-<meta name="description" content="Installing VirtualBox on a SecureBoot enabled system can be tedious. Here I explain how to sign the kernel modules so that you can load them into the kernel." />
+<meta name="description" content="Installing VirtualBox on a SecureBoot enabled system can be tedious. Here I explain how to sign the kernel modules so that you can load them into the kernel." />
 <meta name="keywords" content="security, fedora, virtualisation, kernel">
 
 <meta property="og:site_name" content="blog.airey.be"/>
-<meta property="og:title" content="VirtualBox on a SecureBoot enabled system"/>
-<meta property="og:description" content="Installing VirtualBox on a SecureBoot enabled system can be tedious. Here I explain how to sign the kernel modules so that you can load them into the kernel."/>
+<meta property="og:title" content="VirtualBox on a SecureBoot enabled system"/>
+<meta property="og:description" content="Installing VirtualBox on a SecureBoot enabled system can be tedious. Here I explain how to sign the kernel modules so that you can load them into the kernel."/>
 <meta property="og:locale" content="en_US"/>
 <meta property="og:url" content="https://blog.airey.be/secureboot-virtualbox.html"/>
 <meta property="og:type" content="article"/>
@@ -54,7 +64,7 @@
 <meta property="article:tag" content="kernel"/>
 <meta property="og:image" content="//en.gravatar.com/userimage/33572940/d1226e18865ebdb31edc84661c5abaa3.jpeg">
 
-  <title>blog.airey.be &ndash; VirtualBox on a SecureBoot enabled system</title>
+  <title>blog.airey.be &ndash; VirtualBox on a SecureBoot enabled system</title>
 
 </head>
 <body>
@@ -102,7 +112,7 @@
 <article class="single">
   <header>
       
-    <h1 id="secureboot-virtualbox">VirtualBox on a SecureBoot enabled system</h1>
+    <h1 id="secureboot-virtualbox">VirtualBox on a SecureBoot enabled&nbsp;system</h1>
     <p>
           Posted on Thu 06 October 2016 in <a href="https://blog.airey.be/category/security.html">security</a>
 
@@ -112,9 +122,9 @@
 
 
   <div>
-    <p>Hello again,</p>
+    <p>Hello&nbsp;again,</p>
 <p>Apparently the kernel modules that Oracle provide for VirtualBox <a href="https://gorka.eguileor.com/vbox-vmware-in-secureboot-linux/">are not signed</a>.</p>
-<p>When starting <code>virtualbox</code> you will get an error that the modules are not loaded.</p>
+<p>When starting <code>virtualbox</code> you will get an error that the modules are not&nbsp;loaded.</p>
 <div class="highlight"><pre><span></span><span class="n">WARNING</span><span class="o">:</span> <span class="n">The</span> <span class="n">vboxdrv</span> <span class="n">kernel</span> <span class="n">module</span> <span class="k">is</span> <span class="n">not</span> <span class="n">loaded</span><span class="o">.</span> <span class="n">Either</span> <span class="n">there</span> <span class="k">is</span> <span class="n">no</span> <span class="n">module</span>
          <span class="n">available</span> <span class="k">for</span> <span class="n">the</span> <span class="n">current</span> <span class="n">kernel</span> <span class="o">(</span><span class="mf">4.7</span><span class="o">.</span><span class="mi">5</span><span class="o">-</span><span class="mi">200</span><span class="o">.</span><span class="na">fc24</span><span class="o">.</span><span class="na">x86_64</span><span class="o">)</span> <span class="n">or</span> <span class="n">it</span> <span class="n">failed</span> <span class="n">to</span>
          <span class="n">load</span><span class="o">.</span> <span class="n">Please</span> <span class="n">recompile</span> <span class="n">the</span> <span class="n">kernel</span> <span class="n">module</span> <span class="n">and</span> <span class="n">install</span> <span class="n">it</span> <span class="n">by</span>
@@ -125,7 +135,7 @@
 </pre></div>
 
 
-<p>When you run <code>sudo /sbin/vboxconfig</code>, it will take very long and eventually fail.</p>
+<p>When you run <code>sudo /sbin/vboxconfig</code>, it will take very long and eventually&nbsp;fail.</p>
 <div class="highlight"><pre><span></span>vboxdrv.sh: Building VirtualBox kernel modules.
 vboxdrv.sh: Starting VirtualBox services.
 vboxdrv.sh: Building VirtualBox kernel modules.
@@ -137,10 +147,10 @@ as root.
 </pre></div>
 
 
-<p>So we can sign them ourselves and load them into the kernel.</p>
-<p>The only downside is you have to do this after every kernel update.</p>
+<p>So we can sign them ourselves and load them into the&nbsp;kernel.</p>
+<p>The only downside is you have to do this after every kernel&nbsp;update.</p>
 <p>So I wrote a little script to simplify that for me.
-This was done on Fedora 23 and 24 Workstation.</p>
+This was done on Fedora 23 and 24&nbsp;Workstation.</p>
 <table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
 2
 3
@@ -157,14 +167,14 @@ sudo mokutil --import MOK_<span class="nv">$KERNEL_VERSION</span>.der
 </pre></div>
 </td></tr></table>
 
-<p>So basicly you will have to do:</p>
+<p>So basicly you will have to&nbsp;do:</p>
 <div class="highlight"><pre><span></span>sudo dnf update -y &amp;&amp; sudo systemctl reboot     # update kernel
 ~/bin/mokutil.sh                                # run script against new kernel
 sudo reboot                                     # reboot and follow the signing process at boot time
 </pre></div>
 
 
-<p>After the reboot you can then check the logs if the module was loaded with the following commands:</p>
+<p>After the reboot you can then check the logs if the module was loaded with the following&nbsp;commands:</p>
 <div class="highlight"><pre><span></span>sudo keyctl list %:.system_keyring
 dmesg | grep &#39;EFI: Loaded cert&#39;
 </pre></div>
@@ -200,7 +210,7 @@ dmesg | grep &#39;EFI: Loaded cert&#39;
 </article>
 
     <footer>
-<p>&copy;  2016</p>
+<p>&copy;  2018</p>
 <p>    Powered by <a href="http://getpelican.com" target="_blank">Pelican</a> - <a href="https://github.com/alexandrevicenzi/flex" target="_blank">Flex</a> theme by <a href="http://alexandrevicenzi.com" target="_blank">Alexandre Vicenzi</a>
 </p>    </footer>
   </main>

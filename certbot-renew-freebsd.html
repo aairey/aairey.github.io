@@ -20,10 +20,20 @@
     <link href="https://blog.airey.be/feeds/all.atom.xml" type="application/atom+xml" rel="alternate" title="blog.airey.be Atom">
 
 
-    <link rel="shortcut icon" href="https://blog.airey.be/images/favicon.ico" type="image/x-icon">
-    <link rel="icon" href="https://blog.airey.be/images/favicon.ico" type="image/x-icon">
+    <link rel="shortcut icon" href="http://localhost:8000/images/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="http://localhost:8000/images/favicon.ico" type="image/x-icon">
 
+<!-- Google Analytics -->
+<script type="text/javascript">
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
 
+  ga('create', 'UA-125578210-1', 'auto');
+  ga('send', 'pageview');
+</script>
+<!-- End Google Analytics -->
     <!-- Chrome, Firefox OS and Opera -->
     <meta name="theme-color" content="#333333">
     <!-- Windows Phone -->
@@ -35,12 +45,12 @@
     <meta name="msapplication-TileColor" content="#333333">
 
 <meta name="author" content="Andy Airey" />
-<meta name="description" content="A small post on how to renew a LetsEncrypt certificate in a FreeBSD jail" />
+<meta name="description" content="A small post on how to renew a LetsEncrypt certificate in a FreeBSD jail" />
 <meta name="keywords" content="owncloud, security, letsencrypt, freenas, cerbot, jails">
 
 <meta property="og:site_name" content="blog.airey.be"/>
-<meta property="og:title" content="certbot renew on FreeBSD"/>
-<meta property="og:description" content="A small post on how to renew a LetsEncrypt certificate in a FreeBSD jail"/>
+<meta property="og:title" content="certbot renew on FreeBSD"/>
+<meta property="og:description" content="A small post on how to renew a LetsEncrypt certificate in a FreeBSD jail"/>
 <meta property="og:locale" content="en_US"/>
 <meta property="og:url" content="https://blog.airey.be/certbot-renew-freebsd.html"/>
 <meta property="og:type" content="article"/>
@@ -56,7 +66,7 @@
 <meta property="article:tag" content="jails"/>
 <meta property="og:image" content="//en.gravatar.com/userimage/33572940/d1226e18865ebdb31edc84661c5abaa3.jpeg">
 
-  <title>blog.airey.be &ndash; certbot renew on FreeBSD</title>
+  <title>blog.airey.be &ndash; certbot renew on FreeBSD</title>
 
 </head>
 <body>
@@ -104,7 +114,7 @@
 <article class="single">
   <header>
       
-    <h1 id="certbot-renew-freebsd">certbot renew on FreeBSD</h1>
+    <h1 id="certbot-renew-freebsd">certbot renew on&nbsp;FreeBSD</h1>
     <p>
           Posted on Wed 17 August 2016 in <a href="https://blog.airey.be/category/homelab.html">homelab</a>
 
@@ -114,11 +124,11 @@
 
 
   <div>
-    <p>Hi there,</p>
-<p>In <a href="../owncloud-letsencrypt">my last post</a> I talked about getting a free certificate fron <a href="https://letsencrypt.org/">LetsEncrypt</a> using py27-letsencrypt.</p>
+    <p>Hi&nbsp;there,</p>
+<p>In <a href="../owncloud-letsencrypt">my last post</a> I talked about getting a free certificate fron <a href="https://letsencrypt.org/">LetsEncrypt</a> using&nbsp;py27-letsencrypt.</p>
 <p>Turns out I was not using the right package for the job.
 The package <a href="https://certbot.eff.org/docs/using.html">certbot</a> is available now and this (also Python) is used in favor of <code>py27-letsencrypt</code>.</p>
-<p>I found out when I wanted to renew my certificate:</p>
+<p>I found out when I wanted to renew my&nbsp;certificate:</p>
 <div class="highlight"><pre><span></span># letsencrypt renew -d your.domain.org
 Currently, the renew verb is only capable of renewing all installed certificates that are due to be renewed; individual domains cannot be specified with this action. If you would like to renew specific certificates, use the certonly command. The renew verb may provide other options for selecting certificates to renew in the future.
 root@owncloud_1:~ # letsencrypt renew
@@ -144,13 +154,13 @@ All renewal attempts failed. The following certs could not be renewed:
 </pre></div>
 
 
-<p>Due to the first error, I wondered if my version was out of date.</p>
+<p>Due to the first error, I wondered if my version was out of&nbsp;date.</p>
 <div class="highlight"><pre><span></span>pkg update
 pkg upgrade
 </pre></div>
 
 
-<p>Yes there was an update, but after the upgrade it was even worse:</p>
+<p>Yes there was an update, but after the upgrade it was even&nbsp;worse:</p>
 <div class="highlight"><pre><span></span><span class="c1"># letsencrypt renew --certonly</span>
 <span class="n">Traceback</span> <span class="p">(</span><span class="n">most</span> <span class="n">recent</span> <span class="n">call</span> <span class="n">last</span><span class="p">):</span>
   <span class="n">File</span> <span class="s2">&quot;/usr/local/bin/letsencrypt&quot;</span><span class="p">,</span> <span class="n">line</span> <span class="mi">5</span><span class="p">,</span> <span class="ow">in</span> <span class="o">&lt;</span><span class="n">module</span><span class="o">&gt;</span>
@@ -188,14 +198,14 @@ pkg upgrade
 </pre></div>
 
 
-<p>After some googling, it seemed I needed letsencrypt-auto or certbot-auto, both not available through the package manager in FreeBSD. So not really my preference.</p>
-<p>I found <a href="https://certbot.eff.org/all-instructions/#freebsd-apache">this page</a> so I installed plain certbot</p>
+<p>After some googling, it seemed I needed letsencrypt-auto or certbot-auto, both not available through the package manager in FreeBSD. So not really my&nbsp;preference.</p>
+<p>I found <a href="https://certbot.eff.org/all-instructions/#freebsd-apache">this page</a> so I installed plain&nbsp;certbot</p>
 <div class="highlight"><pre><span></span>pkg search certbot
 pkg install certbot
 </pre></div>
 
 
-<p>Turns out this was requiring the same <code>acme</code> dependency and version:</p>
+<p>Turns out this was requiring the same <code>acme</code> dependency and&nbsp;version:</p>
 <div class="highlight"><pre><span></span># certbot
 An unexpected error occurred:
 VersionConflict: (acme 0.8.1 (/usr/local/lib/python2.7/site-packages), Requirement.parse(&#39;acme==0.5.0&#39;))
@@ -236,22 +246,22 @@ All renewal attempts failed. The following certs could not be renewed:
 </pre></div>
 
 
-<p>So it tries to run it's own webserver and auto-approve the renewal this way by connecting to it.
+<p>So it tries to run it&#8217;s own webserver and auto-approve the renewal this way by connecting to it.
 This is of course not possible when Apache is running and using the same port on the system.
-It is possible to specify a <a href="https://community.letsencrypt.org/t/le-client-needs-to-bind-to-port-80-which-im-already-using/2739/10">different port</a>, but then you need to set up a NAT/Proxy rule to this port so that it is accessible through standard HTTP on port 80.</p>
-<p>This is not a production server so I wrapped it with these hooks (as recommended):</p>
+It is possible to specify a <a href="https://community.letsencrypt.org/t/le-client-needs-to-bind-to-port-80-which-im-already-using/2739/10">different port</a>, but then you need to set up a <span class="caps">NAT</span>/Proxy rule to this port so that it is accessible through standard <span class="caps">HTTP</span> on port&nbsp;80.</p>
+<p>This is not a production server so I wrapped it with these hooks (as&nbsp;recommended):</p>
 <div class="highlight"><pre><span></span>certbot renew --standalone --pre-hook &quot;/usr/pbi/owncloud-amd64/etc/rc.d/apache24 stop&quot; --post-hook &quot;/usr/pbi/owncloud-amd64/etc/rc.d/apache24 start&quot; --dry-run
 </pre></div>
 
 
-<p>The dry-run was succesful! (in retrospect - could've done this with the original <code>py27-letsencrypt</code> too ...)
-Finally, I set up crontab to take care of this for me in the future:</p>
+<p>The dry-run was succesful! (in retrospect - could&#8217;ve done this with the original <code>py27-letsencrypt</code> too &#8230;)
+Finally, I set up crontab to take care of this for me in the&nbsp;future:</p>
 <div class="highlight"><pre><span></span>0 3 1 */3 * root certbot renew --standalone --pre-hook &quot;/usr/pbi/owncloud-amd64/etc/rc.d/apache24 stop&quot; --post-hook &quot;/usr/pbi/owncloud-amd64/etc/rc.d/apache24 start&quot;
 </pre></div>
 
 
-<p>This will check and renew the cert every 3 (1st of Jan, Apr, Jul, Oct).</p>
-<p>Future-you will thank you!</p>
+<p>This will check and renew the cert every 3 (1st of Jan, Apr, Jul,&nbsp;Oct).</p>
+<p>Future-you will thank&nbsp;you!</p>
   </div>
   <div class="tag-cloud">
     <p>
@@ -286,7 +296,7 @@ Finally, I set up crontab to take care of this for me in the future:</p>
 </article>
 
     <footer>
-<p>&copy;  2016</p>
+<p>&copy;  2018</p>
 <p>    Powered by <a href="http://getpelican.com" target="_blank">Pelican</a> - <a href="https://github.com/alexandrevicenzi/flex" target="_blank">Flex</a> theme by <a href="http://alexandrevicenzi.com" target="_blank">Alexandre Vicenzi</a>
 </p>    </footer>
   </main>

@@ -1,39 +1,39 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>blog.airey.be</title><link href="https://blog.airey.be/" rel="alternate"></link><link href="https://blog.airey.be/feeds/all.atom.xml" rel="self"></link><id>https://blog.airey.be/</id><updated>2018-09-10T23:06:00+02:00</updated><entry><title>Wireguard Setup on Fedora</title><link href="https://blog.airey.be/wireguard-setup.html" rel="alternate"></link><published>2018-09-10T21:49:00+02:00</published><updated>2018-09-10T23:06:00+02:00</updated><author><name>Andy Airey</name></author><id>tag:blog.airey.be,2018-09-10:/wireguard-setup.html</id><summary type="html">&lt;p&gt;How To setup and use Wireguard on Fedora Workstation as client and Fedora Server as PtP and VPN server. Also covers the setup on Android&lt;/p&gt;</summary><content type="html">&lt;p&gt;Ever since Linus Torvalds &lt;a href="http://lkml.iu.edu/hypermail/linux/kernel/1808.0/02472.html"&gt;praised&lt;/a&gt; Wireguard, I've been wanting to try it out.&lt;br&gt;
-Last week I finally got around to play with it, and boy was it easy and elegant to set up.&lt;/p&gt;
-&lt;p&gt;It was really easy to set up, it took me longer to write this blog post than to set up wireguard on 3 peers.&lt;/p&gt;
+<feed xmlns="http://www.w3.org/2005/Atom"><title>blog.airey.be</title><link href="https://blog.airey.be/" rel="alternate"></link><link href="https://blog.airey.be/feeds/all.atom.xml" rel="self"></link><id>https://blog.airey.be/</id><updated>2018-09-10T23:06:00+02:00</updated><entry><title>Wireguard Setup on Fedora</title><link href="https://blog.airey.be/wireguard-setup.html" rel="alternate"></link><published>2018-09-10T21:49:00+02:00</published><updated>2018-09-10T23:06:00+02:00</updated><author><name>Andy Airey</name></author><id>tag:blog.airey.be,2018-09-10:/wireguard-setup.html</id><summary type="html">&lt;p&gt;How To setup and use Wireguard on Fedora Workstation as client and Fedora Server as PtP and &lt;span class="caps"&gt;VPN&lt;/span&gt; server. Also covers the setup on&amp;nbsp;Android&lt;/p&gt;</summary><content type="html">&lt;p&gt;Ever since Linus Torvalds &lt;a href="http://lkml.iu.edu/hypermail/linux/kernel/1808.0/02472.html"&gt;praised&lt;/a&gt; Wireguard, I&amp;#8217;ve been wanting to try it out.&lt;br&gt;
+Last week I finally got around to play with it, and boy was it easy and elegant to set&amp;nbsp;up.&lt;/p&gt;
+&lt;p&gt;It was really easy to set up, it took me longer to write this blog post than to set up wireguard on 3&amp;nbsp;peers.&lt;/p&gt;
 &lt;p&gt;I used a Fedora Server as a first endpoint and my Fedora Workstation as a second endpoint.&lt;br&gt;
-Later on I also easily added my Android phone as a third endpoint, and set up the Fedora Server as a VPN server (routing traffic to the internal and external networks).&lt;/p&gt;
-&lt;p&gt;Let me walk you through the setup steps.&lt;/p&gt;
+Later on I also easily added my Android phone as a third endpoint, and set up the Fedora Server as a &lt;span class="caps"&gt;VPN&lt;/span&gt; server (routing traffic to the internal and external&amp;nbsp;networks).&lt;/p&gt;
+&lt;p&gt;Let me walk you through the setup&amp;nbsp;steps.&lt;/p&gt;
 &lt;h1&gt;Installation&lt;/h1&gt;
-&lt;p&gt;We need to install wireguard first as it is not yet part of the mainline kernel.&lt;/p&gt;
-&lt;p&gt;On the Fedora Server and Workstation:&lt;/p&gt;
+&lt;p&gt;We need to install wireguard first as it is not yet part of the mainline&amp;nbsp;kernel.&lt;/p&gt;
+&lt;p&gt;On the Fedora Server and&amp;nbsp;Workstation:&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;sudo dnf copr &lt;span class="nb"&gt;enable&lt;/span&gt; jdoss/wireguard
 sudo dnf install wireguard-dkms wireguard-tools
 &lt;/pre&gt;&lt;/div&gt;
 
 
-&lt;h1&gt;Setting up the endpoints&lt;/h1&gt;
+&lt;h1&gt;Setting up the&amp;nbsp;endpoints&lt;/h1&gt;
 &lt;p&gt;As you will see below the setup is very similar for both endpoints.&lt;br&gt;
-Note the difference in IP addresses.&lt;/p&gt;
-&lt;p&gt;We will choose a static tunnel IP per host in the 10.0.0.0/24 range, but it could be any range of your choosing.&lt;/p&gt;
-&lt;p&gt;Create a keypair on each host:&lt;/p&gt;
+Note the difference in &lt;span class="caps"&gt;IP&lt;/span&gt;&amp;nbsp;addresses.&lt;/p&gt;
+&lt;p&gt;We will choose a static tunnel &lt;span class="caps"&gt;IP&lt;/span&gt; per host in the 10.0.0.0/24 range, but it could be any range of your&amp;nbsp;choosing.&lt;/p&gt;
+&lt;p&gt;Create a keypair on each&amp;nbsp;host:&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;wg genkey &amp;gt; private
 wg pubkey &amp;lt; private
 &lt;/pre&gt;&lt;/div&gt;
 
 
-&lt;p&gt;Take note of the public key to configure your other client later on.&lt;/p&gt;
-&lt;h2&gt;First peer&lt;/h2&gt;
-&lt;p&gt;Our first endpoint has a private IP address of 192.168.2.1/24 on enp2s0, adapt it to match your machine's private IP address.&lt;/p&gt;
-&lt;p&gt;Interface Settings:&lt;/p&gt;
+&lt;p&gt;Take note of the public key to configure your other client later&amp;nbsp;on.&lt;/p&gt;
+&lt;h2&gt;First&amp;nbsp;peer&lt;/h2&gt;
+&lt;p&gt;Our first endpoint has a private &lt;span class="caps"&gt;IP&lt;/span&gt; address of 192.168.2.1/24 on enp2s0, adapt it to match your machine&amp;#8217;s private &lt;span class="caps"&gt;IP&lt;/span&gt;&amp;nbsp;address.&lt;/p&gt;
+&lt;p&gt;Interface&amp;nbsp;Settings:&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;ip link add dev wg0 &lt;span class="nb"&gt;type&lt;/span&gt; wireguard
 ip address add dev wg0 &lt;span class="m"&gt;10&lt;/span&gt;.0.0.1/24
 wg &lt;span class="nb"&gt;set&lt;/span&gt; wg0 listen-port &lt;span class="m"&gt;51820&lt;/span&gt; private-key ./private
 &lt;/pre&gt;&lt;/div&gt;
 
 
-&lt;p&gt;Peer Settings:&lt;/p&gt;
+&lt;p&gt;Peer&amp;nbsp;Settings:&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;wg &lt;span class="nb"&gt;set&lt;/span&gt; wg0 peer &amp;lt;peer2-public-key&amp;gt; allowed-ips &lt;span class="m"&gt;10&lt;/span&gt;.0.0.2/32 endpoint &amp;lt;peer2-pulic-ip&amp;gt;:51820
 ip link &lt;span class="nb"&gt;set&lt;/span&gt; wg0 up
 &lt;/pre&gt;&lt;/div&gt;
@@ -41,35 +41,35 @@ ip link &lt;span class="nb"&gt;set&lt;/span&gt; wg0 up
 
 &lt;p&gt;The &lt;code&gt;allowed-ips&lt;/code&gt; setting denotes what network lies at the other end of the tunnel.&lt;br&gt;
 Routes will automatically be set up towards these networks when the interface becomes active.&lt;br&gt;
-As a starting point we can use the other peer's tunnel IP address.&lt;/p&gt;
-&lt;h2&gt;Second peer&lt;/h2&gt;
-&lt;p&gt;Interface Settings:&lt;/p&gt;
+As a starting point we can use the other peer&amp;#8217;s tunnel &lt;span class="caps"&gt;IP&lt;/span&gt;&amp;nbsp;address.&lt;/p&gt;
+&lt;h2&gt;Second&amp;nbsp;peer&lt;/h2&gt;
+&lt;p&gt;Interface&amp;nbsp;Settings:&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;ip link add dev wg0 &lt;span class="nb"&gt;type&lt;/span&gt; wireguard
 ip address add dev wg0 &lt;span class="m"&gt;10&lt;/span&gt;.0.0.2/24
 wg &lt;span class="nb"&gt;set&lt;/span&gt; wg0 listen-port &lt;span class="m"&gt;51820&lt;/span&gt; private-key ./private
 &lt;/pre&gt;&lt;/div&gt;
 
 
-&lt;p&gt;Peer Settings:&lt;/p&gt;
+&lt;p&gt;Peer&amp;nbsp;Settings:&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;wg &lt;span class="nb"&gt;set&lt;/span&gt; wg0 peer &amp;lt;peer2-public-key&amp;gt; allowed-ips &lt;span class="m"&gt;10&lt;/span&gt;.0.0.1/24 endpoint &amp;lt;peer1-pulic-ip&amp;gt;:51820
 ip link &lt;span class="nb"&gt;set&lt;/span&gt; wg0 up
 &lt;/pre&gt;&lt;/div&gt;
 
 
-&lt;h2&gt;Check connectivity&lt;/h2&gt;
-&lt;p&gt;At this point you should be able to ping the other endpoint his 10.0.0.x address after the interface is up.&lt;/p&gt;
-&lt;p&gt;The &lt;code&gt;wg&lt;/code&gt; command should show you some useful output as well.&lt;/p&gt;
-&lt;p&gt;Remember when doing tcpdump and forwarding ports, the connection is over UDP, not TCP!&lt;br&gt;
-Hint if you run with firewalld enabled: &lt;code&gt;firewall-cmd --add-port 51820/udp&lt;/code&gt;, see Additional Settings below to do this automatically.&lt;/p&gt;
-&lt;h2&gt;NAT and Dynamic endpoint IP address&lt;/h2&gt;
-&lt;p&gt;If you are, like me, trying to set up your laptop to connect to a remote server, your public IP will most definitely change a lot.&lt;/p&gt;
-&lt;p&gt;The solution to this is to use Dynamic DNS and use this DNS name in your endpoint configuration.&lt;br&gt;
+&lt;h2&gt;Check&amp;nbsp;connectivity&lt;/h2&gt;
+&lt;p&gt;At this point you should be able to ping the other endpoint his 10.0.0.x address after the interface is&amp;nbsp;up.&lt;/p&gt;
+&lt;p&gt;The &lt;code&gt;wg&lt;/code&gt; command should show you some useful output as&amp;nbsp;well.&lt;/p&gt;
+&lt;p&gt;Remember when doing tcpdump and forwarding ports, the connection is over &lt;span class="caps"&gt;UDP&lt;/span&gt;, not &lt;span class="caps"&gt;TCP&lt;/span&gt;!&lt;br&gt;
+Hint if you run with firewalld enabled: &lt;code&gt;firewall-cmd --add-port 51820/udp&lt;/code&gt;, see Additional Settings below to do this&amp;nbsp;automatically.&lt;/p&gt;
+&lt;h2&gt;&lt;span class="caps"&gt;NAT&lt;/span&gt; and Dynamic endpoint &lt;span class="caps"&gt;IP&lt;/span&gt;&amp;nbsp;address&lt;/h2&gt;
+&lt;p&gt;If you are, like me, trying to set up your laptop to connect to a remote server, your public &lt;span class="caps"&gt;IP&lt;/span&gt; will most definitely change a&amp;nbsp;lot.&lt;/p&gt;
+&lt;p&gt;The solution to this is to use Dynamic &lt;span class="caps"&gt;DNS&lt;/span&gt; and use this &lt;span class="caps"&gt;DNS&lt;/span&gt; name in your endpoint configuration.&lt;br&gt;
 Even on Android &lt;a href="https://play.google.com/store/apps/details?id=com.icecoldapps.dynamicdnsupdate"&gt;there is an app for that&lt;/a&gt;.&lt;/p&gt;
-&lt;p&gt;Also, there is a setting called &lt;code&gt;persistent-keepalive&lt;/code&gt; that will assist firewalls to keep the tunnel alive.&lt;/p&gt;
-&lt;h2&gt;Persistent configuration&lt;/h2&gt;
-&lt;p&gt;The CLI tools are nice and all, but I want the VPN link to come up with my Fedora Server and easily bring up the connection with one commmand on my Workstation.&lt;/p&gt;
-&lt;p&gt;No problem, &lt;code&gt;wg-quick&lt;/code&gt; has got you covered.&lt;/p&gt;
-&lt;p&gt;First export the current config to a file, link it to the device and enable the systemd service (if you want to bring the device up at boot time).&lt;/p&gt;
+&lt;p&gt;Also, there is a setting called &lt;code&gt;persistent-keepalive&lt;/code&gt; that will assist firewalls to keep the tunnel&amp;nbsp;alive.&lt;/p&gt;
+&lt;h2&gt;Persistent&amp;nbsp;configuration&lt;/h2&gt;
+&lt;p&gt;The &lt;span class="caps"&gt;CLI&lt;/span&gt; tools are nice and all, but I want the &lt;span class="caps"&gt;VPN&lt;/span&gt; link to come up with my Fedora Server and easily bring up the connection with one commmand on my&amp;nbsp;Workstation.&lt;/p&gt;
+&lt;p&gt;No problem, &lt;code&gt;wg-quick&lt;/code&gt; has got you&amp;nbsp;covered.&lt;/p&gt;
+&lt;p&gt;First export the current config to a file, link it to the device and enable the systemd service (if you want to bring the device up at boot&amp;nbsp;time).&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;wg showconf &amp;gt; /etc/wiregaurd/wg0.conf
 chmod &lt;span class="m"&gt;700&lt;/span&gt; /etc/wireguard/wg0.conf
 wg setconf wg0 /etc/wireguard/wg0.conf
@@ -77,15 +77,15 @@ wg setconf wg0 /etc/wireguard/wg0.conf
 
 
 &lt;p&gt;You can now easily issue &lt;code&gt;wg-quick up wg0&lt;/code&gt; and &lt;code&gt;wg-quick down wg0&lt;/code&gt;.&lt;br&gt;
-To have it start at boot-time issue &lt;code&gt;systemctl enable wg-quick@wg0&lt;/code&gt;. (make sure you stop it first manually before starting the service)&lt;/p&gt;
-&lt;h1&gt;Android peer&lt;/h1&gt;
-&lt;p&gt;Once you have Dynamic DNS set up on your Android using &lt;a href="https://play.google.com/store/apps/details?id=com.icecoldapps.dynamicdnsupdate"&gt;this app&lt;/a&gt;,&lt;/p&gt;
-&lt;h2&gt;Android app setup&lt;/h2&gt;
+To have it start at boot-time issue &lt;code&gt;systemctl enable wg-quick@wg0&lt;/code&gt;. (make sure you stop it first manually before starting the&amp;nbsp;service)&lt;/p&gt;
+&lt;h1&gt;Android&amp;nbsp;peer&lt;/h1&gt;
+&lt;p&gt;Once you have Dynamic &lt;span class="caps"&gt;DNS&lt;/span&gt; set up on your Android using &lt;a href="https://play.google.com/store/apps/details?id=com.icecoldapps.dynamicdnsupdate"&gt;this app&lt;/a&gt;,&lt;/p&gt;
+&lt;h2&gt;Android app&amp;nbsp;setup&lt;/h2&gt;
 &lt;p&gt;Install the &lt;a href="https://play.google.com/store/apps/details?id=com.wireguard.android"&gt;Wireguard Android app&lt;/a&gt;.&lt;/p&gt;
-&lt;p&gt;The configuration is pretty straight-forward, but maybe just choose a different port than the one for your laptop, in case you are on the same network.&lt;/p&gt;
-&lt;p&gt;On the &lt;code&gt;allowed-ips&lt;/code&gt; section, specify '0.0.0.0/0. ::0/0' if you want to forward all internet traffic over this VPN (recommended for public WiFi).&lt;/p&gt;
-&lt;h2&gt;Add peer configuration on the server&lt;/h2&gt;
-&lt;p&gt;I added this Peer configuration to the existing &lt;code&gt;wg0.conf&lt;/code&gt; file on the Server:&lt;/p&gt;
+&lt;p&gt;The configuration is pretty straight-forward, but maybe just choose a different port than the one for your laptop, in case you are on the same&amp;nbsp;network.&lt;/p&gt;
+&lt;p&gt;On the &lt;code&gt;allowed-ips&lt;/code&gt; section, specify &amp;#8216;0.0.0.0/0. ::0/0&amp;#8217; if you want to forward all internet traffic over this &lt;span class="caps"&gt;VPN&lt;/span&gt; (recommended for public&amp;nbsp;WiFi).&lt;/p&gt;
+&lt;h2&gt;Add peer configuration on the&amp;nbsp;server&lt;/h2&gt;
+&lt;p&gt;I added this Peer configuration to the existing &lt;code&gt;wg0.conf&lt;/code&gt; file on the&amp;nbsp;Server:&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="k"&gt;[Peer]&lt;/span&gt;
 &lt;span class="c1"&gt;#mobile&lt;/span&gt;
 &lt;span class="na"&gt;PublicKey&lt;/span&gt;           &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="s"&gt;&amp;lt;android-public-key&amp;gt;&lt;/span&gt;
@@ -95,14 +95,14 @@ To have it start at boot-time issue &lt;code&gt;systemctl enable wg-quick@wg0&lt
 &lt;/pre&gt;&lt;/div&gt;
 
 
-&lt;p&gt;When forwarding traffic to the outside, make sure IP forwarding is on.&lt;/p&gt;
+&lt;p&gt;When forwarding traffic to the outside, make sure &lt;span class="caps"&gt;IP&lt;/span&gt; forwarding is&amp;nbsp;on.&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;sysctl net.ipv4.ip_forward&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;1&lt;/span&gt;
 &lt;/pre&gt;&lt;/div&gt;
 
 
-&lt;h1&gt;Additional settings&lt;/h1&gt;
+&lt;h1&gt;Additional&amp;nbsp;settings&lt;/h1&gt;
 &lt;p&gt;To have the port and masquerading be set up automatically whenever I bring up the wireguard interface, I added soem &lt;code&gt;PostUp&lt;/code&gt; and &lt;code&gt;PostDown&lt;/code&gt; commands.&lt;/p&gt;
-&lt;p&gt;My Interface Settings on the server are as follows;&lt;/p&gt;
+&lt;p&gt;My Interface Settings on the server are as&amp;nbsp;follows;&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="k"&gt;[Interface]&lt;/span&gt;
 &lt;span class="na"&gt;Address&lt;/span&gt;    &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="s"&gt;10.0.0.1/24&lt;/span&gt;
 &lt;span class="na"&gt;PostUp&lt;/span&gt;     &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="s"&gt;firewall-cmd --add-port 51820/udp &amp;amp;&amp;amp; firewall-cmd --add-rich-rule=&amp;#39;rule family=ipv4 source address=10.0.0.0/24 masquerade&amp;#39;&lt;/span&gt;
@@ -112,21 +112,21 @@ To have it start at boot-time issue &lt;code&gt;systemctl enable wg-quick@wg0&lt
 &lt;/pre&gt;&lt;/div&gt;
 
 
-&lt;p&gt;Now you can enjoy a very fast and easy to maintain VPN configuration on the road, whether it's on your mobile or on your laptop.&lt;/p&gt;
-&lt;h1&gt;More Resources&lt;/h1&gt;
+&lt;p&gt;Now you can enjoy a very fast and easy to maintain &lt;span class="caps"&gt;VPN&lt;/span&gt; configuration on the road, whether it&amp;#8217;s on your mobile or on your&amp;nbsp;laptop.&lt;/p&gt;
+&lt;h1&gt;More&amp;nbsp;Resources&lt;/h1&gt;
 &lt;ul&gt;
 &lt;li&gt;Wireguard docs for &lt;a href="https://www.wireguard.com/install/"&gt;installation&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;Wireguard docs for &lt;a href="https://www.wireguard.com/install/"&gt;QuickStart setup&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href="https://wiki.archlinux.org/index.php/WireGuard"&gt;Arch Wiki&lt;/a&gt; was really helpful, as always.&lt;/li&gt;
-&lt;li&gt;&lt;a href="https://www.rootusers.com/how-to-use-firewalld-rich-rules-and-zones-for-filtering-and-nat/"&gt;Blog post&lt;/a&gt; on firewalld, scroll down to masquerading &lt;/li&gt;
-&lt;/ul&gt;</content><category term="fedora"></category><category term="security"></category><category term="vpn"></category></entry><entry><title>ownCloud 9.1 upgrade on FreeNAS</title><link href="https://blog.airey.be/owncloud-91-upgrade-freenas.html" rel="alternate"></link><published>2016-11-18T14:21:00+01:00</published><updated>2016-11-21T00:13:00+01:00</updated><author><name>Andy Airey</name></author><id>tag:blog.airey.be,2016-11-18:/owncloud-91-upgrade-freenas.html</id><summary type="html">&lt;p&gt;Did the upgrade to 9.1 give you a broken setup too? Here is a small guide to resolve it.&lt;/p&gt;</summary><content type="html">&lt;p&gt;Hello there.&lt;/p&gt;
-&lt;p&gt;I updated my ownCloud FreeNAS plugin to the latest version.&lt;/p&gt;
-&lt;p&gt;After that I did not get my login page back, but I had to continue doing the update manually through the CLI.&lt;/p&gt;
-&lt;p&gt;Below are the steps I took.&lt;/p&gt;
-&lt;p&gt;This might help other people using ownCloud on FreeNAS/FreeBSD.&lt;/p&gt;
+&lt;li&gt;Wireguard docs for &lt;a href="https://www.wireguard.com/install/"&gt;QuickStart&amp;nbsp;setup&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="https://wiki.archlinux.org/index.php/WireGuard"&gt;Arch Wiki&lt;/a&gt; was really helpful, as&amp;nbsp;always.&lt;/li&gt;
+&lt;li&gt;&lt;a href="https://www.rootusers.com/how-to-use-firewalld-rich-rules-and-zones-for-filtering-and-nat/"&gt;Blog post&lt;/a&gt; on firewalld, scroll down to&amp;nbsp;masquerading &lt;/li&gt;
+&lt;/ul&gt;</content><category term="fedora"></category><category term="security"></category><category term="vpn"></category></entry><entry><title>ownCloud 9.1 upgrade on FreeNAS</title><link href="https://blog.airey.be/owncloud-91-upgrade-freenas.html" rel="alternate"></link><published>2016-11-18T14:21:00+01:00</published><updated>2016-11-21T00:13:00+01:00</updated><author><name>Andy Airey</name></author><id>tag:blog.airey.be,2016-11-18:/owncloud-91-upgrade-freenas.html</id><summary type="html">&lt;p&gt;Did the upgrade to 9.1 give you a broken setup too? Here is a small guide to resolve&amp;nbsp;it.&lt;/p&gt;</summary><content type="html">&lt;p&gt;Hello&amp;nbsp;there.&lt;/p&gt;
+&lt;p&gt;I updated my ownCloud FreeNAS plugin to the latest&amp;nbsp;version.&lt;/p&gt;
+&lt;p&gt;After that I did not get my login page back, but I had to continue doing the update manually through the &lt;span class="caps"&gt;CLI&lt;/span&gt;.&lt;/p&gt;
+&lt;p&gt;Below are the steps I&amp;nbsp;took.&lt;/p&gt;
+&lt;p&gt;This might help other people using ownCloud on&amp;nbsp;FreeNAS/FreeBSD.&lt;/p&gt;
 &lt;ol&gt;
 &lt;li&gt;
-&lt;p&gt;First log in to your FreeNAS box and enter the correct jail&lt;/p&gt;
+&lt;p&gt;First log in to your FreeNAS box and enter the correct&amp;nbsp;jail&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;jls
 jexec &lt;span class="m"&gt;4&lt;/span&gt; tcsh    &lt;span class="c1"&gt;# in my case jail number 4 was ownCloud&lt;/span&gt;
 &lt;/pre&gt;&lt;/div&gt;
@@ -134,7 +134,7 @@ jexec &lt;span class="m"&gt;4&lt;/span&gt; tcsh    &lt;span class="c1"&gt;# in m
 
 &lt;/li&gt;
 &lt;li&gt;
-&lt;p&gt;Then you should go to the owncloud install directory&lt;/p&gt;
+&lt;p&gt;Then you should go to the owncloud install&amp;nbsp;directory&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="nb"&gt;cd&lt;/span&gt; /usr/pbi/owncloud-amd64/www/owncloud
 &lt;/pre&gt;&lt;/div&gt;
 
@@ -142,15 +142,15 @@ jexec &lt;span class="m"&gt;4&lt;/span&gt; tcsh    &lt;span class="c1"&gt;# in m
 &lt;/li&gt;
 &lt;li&gt;
 &lt;p&gt;Now the following command should be run to conclude the upgrade process (see the official &lt;a href="https://doc.owncloud.org/server/9.1/admin_manual/configuration_server/occ_command.html#command-line-upgrade"&gt;docs&lt;/a&gt;).
-   On FreeBSD it is a little different:&lt;/p&gt;
+   On FreeBSD it is a little&amp;nbsp;different:&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;su -m www -c &lt;span class="s1"&gt;&amp;#39;php occ upgrade&amp;#39;&lt;/span&gt;
 &lt;/pre&gt;&lt;/div&gt;
 
 
 &lt;/li&gt;
 &lt;li&gt;
-&lt;p&gt;That will give you a bunch of errors, the problem is that php and it's dependencies are not installed.
-   Here are all the dependencies I had to install:&lt;/p&gt;
+&lt;p&gt;That will give you a bunch of errors, the problem is that php and it&amp;#8217;s dependencies are not installed.
+   Here are all the dependencies I had to&amp;nbsp;install:&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;pkg install php56 php56-ctype php56-gd php56-xmlreader php56-xml php56-zip php56-xmlwriter php56-curl &lt;span class="se"&gt;\&lt;/span&gt;
             php56-zlib php56-hash php56-mbstring php56-posix php56-pdo php56-sqlite3 php56-pdo_sqlite &lt;span class="se"&gt;\&lt;/span&gt;
             php56-json php56-simplexml
@@ -159,14 +159,14 @@ jexec &lt;span class="m"&gt;4&lt;/span&gt; tcsh    &lt;span class="c1"&gt;# in m
 
 &lt;/li&gt;
 &lt;li&gt;
-&lt;p&gt;After that I could run the upgrade command without and I got my login prompt back!&lt;/p&gt;
+&lt;p&gt;After that I could run the upgrade command without and I got my login prompt&amp;nbsp;back!&lt;/p&gt;
 &lt;/li&gt;
 &lt;/ol&gt;
-&lt;p&gt;Disclaimer: I am not a FreeBSD expert, so there might be a cleaner way to do this.&lt;/p&gt;
-&lt;p&gt;I found it really weird that I had to install php56 after a plain update of the ownCloud pbi ...&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;Update:&lt;/strong&gt; There is now an &lt;a href="https://forums.freenas.org/index.php?threads/new-plugins-for-freenas-9-november-2016-nextcloud-madsonic-resilio-nzbhydra.47259/"&gt;official NextCloud plugin for FreeNAS&lt;/a&gt;, we should all be using that now. Here's &lt;a href="http://www.techrepublic.com/article/owncloud-founder-has-forked-their-product-into-nextcloud/"&gt;why&lt;/a&gt;.&lt;/p&gt;</content><category term="owncloud"></category><category term="freenas"></category><category term="upgrade"></category></entry><entry><title>VirtualBox on a SecureBoot enabled system</title><link href="https://blog.airey.be/secureboot-virtualbox.html" rel="alternate"></link><published>2016-10-06T13:27:00+02:00</published><updated>2016-10-17T13:30:00+02:00</updated><author><name>Andy Airey</name></author><id>tag:blog.airey.be,2016-10-06:/secureboot-virtualbox.html</id><summary type="html">&lt;p&gt;Installing VirtualBox on a SecureBoot enabled system can be tedious. Here I explain how to sign the kernel modules so that you can load them into the kernel.&lt;/p&gt;</summary><content type="html">&lt;p&gt;Hello again,&lt;/p&gt;
+&lt;p&gt;Disclaimer: I am not a FreeBSD expert, so there might be a cleaner way to do&amp;nbsp;this.&lt;/p&gt;
+&lt;p&gt;I found it really weird that I had to install php56 after a plain update of the ownCloud pbi&amp;nbsp;&amp;#8230;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Update:&lt;/strong&gt; There is now an &lt;a href="https://forums.freenas.org/index.php?threads/new-plugins-for-freenas-9-november-2016-nextcloud-madsonic-resilio-nzbhydra.47259/"&gt;official NextCloud plugin for FreeNAS&lt;/a&gt;, we should all be using that now. Here&amp;#8217;s &lt;a href="http://www.techrepublic.com/article/owncloud-founder-has-forked-their-product-into-nextcloud/"&gt;why&lt;/a&gt;.&lt;/p&gt;</content><category term="owncloud"></category><category term="freenas"></category><category term="upgrade"></category></entry><entry><title>VirtualBox on a SecureBoot enabled system</title><link href="https://blog.airey.be/secureboot-virtualbox.html" rel="alternate"></link><published>2016-10-06T13:27:00+02:00</published><updated>2016-10-17T13:30:00+02:00</updated><author><name>Andy Airey</name></author><id>tag:blog.airey.be,2016-10-06:/secureboot-virtualbox.html</id><summary type="html">&lt;p&gt;Installing VirtualBox on a SecureBoot enabled system can be tedious. Here I explain how to sign the kernel modules so that you can load them into the&amp;nbsp;kernel.&lt;/p&gt;</summary><content type="html">&lt;p&gt;Hello&amp;nbsp;again,&lt;/p&gt;
 &lt;p&gt;Apparently the kernel modules that Oracle provide for VirtualBox &lt;a href="https://gorka.eguileor.com/vbox-vmware-in-secureboot-linux/"&gt;are not signed&lt;/a&gt;.&lt;/p&gt;
-&lt;p&gt;When starting &lt;code&gt;virtualbox&lt;/code&gt; you will get an error that the modules are not loaded.&lt;/p&gt;
+&lt;p&gt;When starting &lt;code&gt;virtualbox&lt;/code&gt; you will get an error that the modules are not&amp;nbsp;loaded.&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="n"&gt;WARNING&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="n"&gt;The&lt;/span&gt; &lt;span class="n"&gt;vboxdrv&lt;/span&gt; &lt;span class="n"&gt;kernel&lt;/span&gt; &lt;span class="n"&gt;module&lt;/span&gt; &lt;span class="k"&gt;is&lt;/span&gt; &lt;span class="n"&gt;not&lt;/span&gt; &lt;span class="n"&gt;loaded&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt; &lt;span class="n"&gt;Either&lt;/span&gt; &lt;span class="n"&gt;there&lt;/span&gt; &lt;span class="k"&gt;is&lt;/span&gt; &lt;span class="n"&gt;no&lt;/span&gt; &lt;span class="n"&gt;module&lt;/span&gt;
          &lt;span class="n"&gt;available&lt;/span&gt; &lt;span class="k"&gt;for&lt;/span&gt; &lt;span class="n"&gt;the&lt;/span&gt; &lt;span class="n"&gt;current&lt;/span&gt; &lt;span class="n"&gt;kernel&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="mf"&gt;4.7&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="mi"&gt;5&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="mi"&gt;200&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="na"&gt;fc24&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="na"&gt;x86_64&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt; &lt;span class="n"&gt;or&lt;/span&gt; &lt;span class="n"&gt;it&lt;/span&gt; &lt;span class="n"&gt;failed&lt;/span&gt; &lt;span class="n"&gt;to&lt;/span&gt;
          &lt;span class="n"&gt;load&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt; &lt;span class="n"&gt;Please&lt;/span&gt; &lt;span class="n"&gt;recompile&lt;/span&gt; &lt;span class="n"&gt;the&lt;/span&gt; &lt;span class="n"&gt;kernel&lt;/span&gt; &lt;span class="n"&gt;module&lt;/span&gt; &lt;span class="n"&gt;and&lt;/span&gt; &lt;span class="n"&gt;install&lt;/span&gt; &lt;span class="n"&gt;it&lt;/span&gt; &lt;span class="n"&gt;by&lt;/span&gt;
@@ -177,7 +177,7 @@ jexec &lt;span class="m"&gt;4&lt;/span&gt; tcsh    &lt;span class="c1"&gt;# in m
 &lt;/pre&gt;&lt;/div&gt;
 
 
-&lt;p&gt;When you run &lt;code&gt;sudo /sbin/vboxconfig&lt;/code&gt;, it will take very long and eventually fail.&lt;/p&gt;
+&lt;p&gt;When you run &lt;code&gt;sudo /sbin/vboxconfig&lt;/code&gt;, it will take very long and eventually&amp;nbsp;fail.&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;vboxdrv.sh: Building VirtualBox kernel modules.
 vboxdrv.sh: Starting VirtualBox services.
 vboxdrv.sh: Building VirtualBox kernel modules.
@@ -189,10 +189,10 @@ as root.
 &lt;/pre&gt;&lt;/div&gt;
 
 
-&lt;p&gt;So we can sign them ourselves and load them into the kernel.&lt;/p&gt;
-&lt;p&gt;The only downside is you have to do this after every kernel update.&lt;/p&gt;
+&lt;p&gt;So we can sign them ourselves and load them into the&amp;nbsp;kernel.&lt;/p&gt;
+&lt;p&gt;The only downside is you have to do this after every kernel&amp;nbsp;update.&lt;/p&gt;
 &lt;p&gt;So I wrote a little script to simplify that for me.
-This was done on Fedora 23 and 24 Workstation.&lt;/p&gt;
+This was done on Fedora 23 and 24&amp;nbsp;Workstation.&lt;/p&gt;
 &lt;table class="highlighttable"&gt;&lt;tr&gt;&lt;td class="linenos"&gt;&lt;div class="linenodiv"&gt;&lt;pre&gt;1
 2
 3
@@ -209,21 +209,21 @@ sudo mokutil --import MOK_&lt;span class="nv"&gt;$KERNEL_VERSION&lt;/span&gt;.de
 &lt;/pre&gt;&lt;/div&gt;
 &lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
 
-&lt;p&gt;So basicly you will have to do:&lt;/p&gt;
+&lt;p&gt;So basicly you will have to&amp;nbsp;do:&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;sudo dnf update -y &amp;amp;&amp;amp; sudo systemctl reboot     # update kernel
 ~/bin/mokutil.sh                                # run script against new kernel
 sudo reboot                                     # reboot and follow the signing process at boot time
 &lt;/pre&gt;&lt;/div&gt;
 
 
-&lt;p&gt;After the reboot you can then check the logs if the module was loaded with the following commands:&lt;/p&gt;
+&lt;p&gt;After the reboot you can then check the logs if the module was loaded with the following&amp;nbsp;commands:&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;sudo keyctl list %:.system_keyring
 dmesg | grep &amp;#39;EFI: Loaded cert&amp;#39;
-&lt;/pre&gt;&lt;/div&gt;</content><category term="security"></category><category term="fedora"></category><category term="virtualisation"></category><category term="kernel"></category></entry><entry><title>certbot renew on FreeBSD</title><link href="https://blog.airey.be/certbot-renew-freebsd.html" rel="alternate"></link><published>2016-08-17T22:27:00+02:00</published><updated>2016-08-17T23:30:00+02:00</updated><author><name>Andy Airey</name></author><id>tag:blog.airey.be,2016-08-17:/certbot-renew-freebsd.html</id><summary type="html">&lt;p&gt;A small post on how to renew a LetsEncrypt certificate in a FreeBSD jail&lt;/p&gt;</summary><content type="html">&lt;p&gt;Hi there,&lt;/p&gt;
-&lt;p&gt;In &lt;a href="../owncloud-letsencrypt"&gt;my last post&lt;/a&gt; I talked about getting a free certificate fron &lt;a href="https://letsencrypt.org/"&gt;LetsEncrypt&lt;/a&gt; using py27-letsencrypt.&lt;/p&gt;
+&lt;/pre&gt;&lt;/div&gt;</content><category term="security"></category><category term="fedora"></category><category term="virtualisation"></category><category term="kernel"></category></entry><entry><title>certbot renew on FreeBSD</title><link href="https://blog.airey.be/certbot-renew-freebsd.html" rel="alternate"></link><published>2016-08-17T22:27:00+02:00</published><updated>2016-08-17T23:30:00+02:00</updated><author><name>Andy Airey</name></author><id>tag:blog.airey.be,2016-08-17:/certbot-renew-freebsd.html</id><summary type="html">&lt;p&gt;A small post on how to renew a LetsEncrypt certificate in a FreeBSD&amp;nbsp;jail&lt;/p&gt;</summary><content type="html">&lt;p&gt;Hi&amp;nbsp;there,&lt;/p&gt;
+&lt;p&gt;In &lt;a href="../owncloud-letsencrypt"&gt;my last post&lt;/a&gt; I talked about getting a free certificate fron &lt;a href="https://letsencrypt.org/"&gt;LetsEncrypt&lt;/a&gt; using&amp;nbsp;py27-letsencrypt.&lt;/p&gt;
 &lt;p&gt;Turns out I was not using the right package for the job.
 The package &lt;a href="https://certbot.eff.org/docs/using.html"&gt;certbot&lt;/a&gt; is available now and this (also Python) is used in favor of &lt;code&gt;py27-letsencrypt&lt;/code&gt;.&lt;/p&gt;
-&lt;p&gt;I found out when I wanted to renew my certificate:&lt;/p&gt;
+&lt;p&gt;I found out when I wanted to renew my&amp;nbsp;certificate:&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;# letsencrypt renew -d your.domain.org
 Currently, the renew verb is only capable of renewing all installed certificates that are due to be renewed; individual domains cannot be specified with this action. If you would like to renew specific certificates, use the certonly command. The renew verb may provide other options for selecting certificates to renew in the future.
 root@owncloud_1:~ # letsencrypt renew
@@ -249,13 +249,13 @@ All renewal attempts failed. The following certs could not be renewed:
 &lt;/pre&gt;&lt;/div&gt;
 
 
-&lt;p&gt;Due to the first error, I wondered if my version was out of date.&lt;/p&gt;
+&lt;p&gt;Due to the first error, I wondered if my version was out of&amp;nbsp;date.&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;pkg update
 pkg upgrade
 &lt;/pre&gt;&lt;/div&gt;
 
 
-&lt;p&gt;Yes there was an update, but after the upgrade it was even worse:&lt;/p&gt;
+&lt;p&gt;Yes there was an update, but after the upgrade it was even&amp;nbsp;worse:&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="c1"&gt;# letsencrypt renew --certonly&lt;/span&gt;
 &lt;span class="n"&gt;Traceback&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;most&lt;/span&gt; &lt;span class="n"&gt;recent&lt;/span&gt; &lt;span class="n"&gt;call&lt;/span&gt; &lt;span class="n"&gt;last&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;
   &lt;span class="n"&gt;File&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;/usr/local/bin/letsencrypt&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;line&lt;/span&gt; &lt;span class="mi"&gt;5&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="ow"&gt;in&lt;/span&gt; &lt;span class="o"&gt;&amp;lt;&lt;/span&gt;&lt;span class="n"&gt;module&lt;/span&gt;&lt;span class="o"&gt;&amp;gt;&lt;/span&gt;
@@ -293,14 +293,14 @@ pkg upgrade
 &lt;/pre&gt;&lt;/div&gt;
 
 
-&lt;p&gt;After some googling, it seemed I needed letsencrypt-auto or certbot-auto, both not available through the package manager in FreeBSD. So not really my preference.&lt;/p&gt;
-&lt;p&gt;I found &lt;a href="https://certbot.eff.org/all-instructions/#freebsd-apache"&gt;this page&lt;/a&gt; so I installed plain certbot&lt;/p&gt;
+&lt;p&gt;After some googling, it seemed I needed letsencrypt-auto or certbot-auto, both not available through the package manager in FreeBSD. So not really my&amp;nbsp;preference.&lt;/p&gt;
+&lt;p&gt;I found &lt;a href="https://certbot.eff.org/all-instructions/#freebsd-apache"&gt;this page&lt;/a&gt; so I installed plain&amp;nbsp;certbot&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;pkg search certbot
 pkg install certbot
 &lt;/pre&gt;&lt;/div&gt;
 
 
-&lt;p&gt;Turns out this was requiring the same &lt;code&gt;acme&lt;/code&gt; dependency and version:&lt;/p&gt;
+&lt;p&gt;Turns out this was requiring the same &lt;code&gt;acme&lt;/code&gt; dependency and&amp;nbsp;version:&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;# certbot
 An unexpected error occurred:
 VersionConflict: (acme 0.8.1 (/usr/local/lib/python2.7/site-packages), Requirement.parse(&amp;#39;acme==0.5.0&amp;#39;))
@@ -341,31 +341,31 @@ All renewal attempts failed. The following certs could not be renewed:
 &lt;/pre&gt;&lt;/div&gt;
 
 
-&lt;p&gt;So it tries to run it's own webserver and auto-approve the renewal this way by connecting to it.
+&lt;p&gt;So it tries to run it&amp;#8217;s own webserver and auto-approve the renewal this way by connecting to it.
 This is of course not possible when Apache is running and using the same port on the system.
-It is possible to specify a &lt;a href="https://community.letsencrypt.org/t/le-client-needs-to-bind-to-port-80-which-im-already-using/2739/10"&gt;different port&lt;/a&gt;, but then you need to set up a NAT/Proxy rule to this port so that it is accessible through standard HTTP on port 80.&lt;/p&gt;
-&lt;p&gt;This is not a production server so I wrapped it with these hooks (as recommended):&lt;/p&gt;
+It is possible to specify a &lt;a href="https://community.letsencrypt.org/t/le-client-needs-to-bind-to-port-80-which-im-already-using/2739/10"&gt;different port&lt;/a&gt;, but then you need to set up a &lt;span class="caps"&gt;NAT&lt;/span&gt;/Proxy rule to this port so that it is accessible through standard &lt;span class="caps"&gt;HTTP&lt;/span&gt; on port&amp;nbsp;80.&lt;/p&gt;
+&lt;p&gt;This is not a production server so I wrapped it with these hooks (as&amp;nbsp;recommended):&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;certbot renew --standalone --pre-hook &amp;quot;/usr/pbi/owncloud-amd64/etc/rc.d/apache24 stop&amp;quot; --post-hook &amp;quot;/usr/pbi/owncloud-amd64/etc/rc.d/apache24 start&amp;quot; --dry-run
 &lt;/pre&gt;&lt;/div&gt;
 
 
-&lt;p&gt;The dry-run was succesful! (in retrospect - could've done this with the original &lt;code&gt;py27-letsencrypt&lt;/code&gt; too ...)
-Finally, I set up crontab to take care of this for me in the future:&lt;/p&gt;
+&lt;p&gt;The dry-run was succesful! (in retrospect - could&amp;#8217;ve done this with the original &lt;code&gt;py27-letsencrypt&lt;/code&gt; too &amp;#8230;)
+Finally, I set up crontab to take care of this for me in the&amp;nbsp;future:&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;0 3 1 */3 * root certbot renew --standalone --pre-hook &amp;quot;/usr/pbi/owncloud-amd64/etc/rc.d/apache24 stop&amp;quot; --post-hook &amp;quot;/usr/pbi/owncloud-amd64/etc/rc.d/apache24 start&amp;quot;
 &lt;/pre&gt;&lt;/div&gt;
 
 
-&lt;p&gt;This will check and renew the cert every 3 (1st of Jan, Apr, Jul, Oct).&lt;/p&gt;
-&lt;p&gt;Future-you will thank you!&lt;/p&gt;</content><category term="owncloud"></category><category term="security"></category><category term="letsencrypt"></category><category term="freenas"></category><category term="cerbot"></category><category term="jails"></category></entry><entry><title>letsencrypt and OwnCloud</title><link href="https://blog.airey.be/owncloud-letsencrypt.html" rel="alternate"></link><published>2016-07-07T22:20:00+02:00</published><updated>2016-08-01T23:52:00+02:00</updated><author><name>Andy Airey</name></author><id>tag:blog.airey.be,2016-07-07:/owncloud-letsencrypt.html</id><summary type="html">&lt;p&gt;A small post on how to set up ownCloud to use a letsencrypt certificate within a FreeNAS jail&lt;/p&gt;</summary><content type="html">&lt;p&gt;Hello there.&lt;/p&gt;
-&lt;p&gt;Recently I was in the need of an SSL certificate for my personal &lt;a href="https://owncloud.org/"&gt;ownCloud&lt;/a&gt; server.
+&lt;p&gt;This will check and renew the cert every 3 (1st of Jan, Apr, Jul,&amp;nbsp;Oct).&lt;/p&gt;
+&lt;p&gt;Future-you will thank&amp;nbsp;you!&lt;/p&gt;</content><category term="owncloud"></category><category term="security"></category><category term="letsencrypt"></category><category term="freenas"></category><category term="cerbot"></category><category term="jails"></category></entry><entry><title>letsencrypt and OwnCloud</title><link href="https://blog.airey.be/owncloud-letsencrypt.html" rel="alternate"></link><published>2016-07-07T22:20:00+02:00</published><updated>2016-08-01T23:52:00+02:00</updated><author><name>Andy Airey</name></author><id>tag:blog.airey.be,2016-07-07:/owncloud-letsencrypt.html</id><summary type="html">&lt;p&gt;A small post on how to set up ownCloud to use a letsencrypt certificate within a FreeNAS&amp;nbsp;jail&lt;/p&gt;</summary><content type="html">&lt;p&gt;Hello&amp;nbsp;there.&lt;/p&gt;
+&lt;p&gt;Recently I was in the need of an &lt;span class="caps"&gt;SSL&lt;/span&gt; certificate for my personal &lt;a href="https://owncloud.org/"&gt;ownCloud&lt;/a&gt; server.
 On my setup, ownCloud runs as a &lt;a href="https://doc.freenas.org/9.10/freenas_plugins.html#installing-plugins"&gt;plugin for FreeNAS 9.10&lt;/a&gt;.&lt;/p&gt;
 &lt;p&gt;At the time of writing &lt;a href="https://letsencrypt.org/2016/04/12/leaving-beta-new-sponsors.html"&gt;letsencrypt was out of beta&lt;/a&gt; for some months and I decided to give it a go.
-I've had good experience with &lt;a href="https://www.startssl.com/"&gt;StartSSL&lt;/a&gt; and their free certificate for one hostname, but I've been following the letsencrypt developments and I really stand behind what they are doing.&lt;/p&gt;
-&lt;p&gt;I have to say I was somewhat surprised by the results. It was really easy to set up and the certificate was trusted, no problem. Even &lt;a href="https://www.ssllabs.com/"&gt;SSL Labs&lt;/a&gt; didn't complain :).&lt;/p&gt;
-&lt;p&gt;Here's how I did it.&lt;/p&gt;
+I&amp;#8217;ve had good experience with &lt;a href="https://www.startssl.com/"&gt;StartSSL&lt;/a&gt; and their free certificate for one hostname, but I&amp;#8217;ve been following the letsencrypt developments and I really stand behind what they are&amp;nbsp;doing.&lt;/p&gt;
+&lt;p&gt;I have to say I was somewhat surprised by the results. It was really easy to set up and the certificate was trusted, no problem. Even &lt;a href="https://www.ssllabs.com/"&gt;&lt;span class="caps"&gt;SSL&lt;/span&gt; Labs&lt;/a&gt; didn&amp;#8217;t complain&amp;nbsp;:).&lt;/p&gt;
+&lt;p&gt;Here&amp;#8217;s how I did&amp;nbsp;it.&lt;/p&gt;
 &lt;ol&gt;
 &lt;li&gt;
-&lt;p&gt;On your FreeNAS host, find out which jail is runing owncloud and enter it:&lt;/p&gt;
+&lt;p&gt;On your FreeNAS host, find out which jail is runing owncloud and enter&amp;nbsp;it:&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;jls
 jexec &lt;span class="m"&gt;3&lt;/span&gt; tcsh
 &lt;/pre&gt;&lt;/div&gt;
@@ -373,14 +373,14 @@ jexec &lt;span class="m"&gt;3&lt;/span&gt; tcsh
 
 &lt;/li&gt;
 &lt;li&gt;
-&lt;p&gt;Install the needed packages within this jail:&lt;/p&gt;
+&lt;p&gt;Install the needed packages within this&amp;nbsp;jail:&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;pkg install py27-letsencrypt
 &lt;/pre&gt;&lt;/div&gt;
 
 
 &lt;/li&gt;
 &lt;li&gt;
-&lt;p&gt;Stop apache and start the setup wizard:&lt;/p&gt;
+&lt;p&gt;Stop apache and start the setup&amp;nbsp;wizard:&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;/usr/pbi/owncloud-amd64/etc/rc.d/apache24 stop
 letsencrypt certonly
 &lt;/pre&gt;&lt;/div&gt;
@@ -388,7 +388,7 @@ letsencrypt certonly
 
 &lt;/li&gt;
 &lt;li&gt;
-&lt;p&gt;Softlink the new certs from the apache directory (replace your.domain.org with the domain name from step 3)&lt;/p&gt;
+&lt;p&gt;Softlink the new certs from the apache directory (replace your.domain.org with the domain name from step&amp;nbsp;3)&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;/usr/pbi/owncloud-amd64/etc/rc.d/apache24 start
 &lt;span class="nb"&gt;cd&lt;/span&gt; /usr/pbi/owncloud-amd64/etc/apache24/
 ln -s /usr/local/etc/letsencrypt/live/your.domain.org/cert.pem letsencrypt.crt
@@ -399,7 +399,7 @@ ln -s /usr/local/etc/letsencrypt/live/your.domain.org/chain.pem letsencrypt_chai
 
 &lt;/li&gt;
 &lt;li&gt;
-&lt;p&gt;edit &lt;code&gt;extra/httpd-ssl.conf&lt;/code&gt; and change it so that&lt;/p&gt;
+&lt;p&gt;edit &lt;code&gt;extra/httpd-ssl.conf&lt;/code&gt; and change it so&amp;nbsp;that&lt;/p&gt;
 &lt;table class="highlighttable"&gt;&lt;tr&gt;&lt;td class="linenos"&gt;&lt;div class="linenodiv"&gt;&lt;pre&gt;1
 2
 3
@@ -418,25 +418,25 @@ ln -s /usr/local/etc/letsencrypt/live/your.domain.org/chain.pem letsencrypt_chai
 
 &lt;/li&gt;
 &lt;li&gt;
-&lt;p&gt;Restart Apache HTTPD:&lt;/p&gt;
+&lt;p&gt;Restart Apache &lt;span class="caps"&gt;HTTPD&lt;/span&gt;:&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;../rc.d/apache24 restart
 &lt;/pre&gt;&lt;/div&gt;
 
 
 &lt;/li&gt;
 &lt;li&gt;
-&lt;p&gt;Check the logs for errors:&lt;/p&gt;
+&lt;p&gt;Check the logs for&amp;nbsp;errors:&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;tail /var/log/httpd-error.log
 &lt;/pre&gt;&lt;/div&gt;
 
 
 &lt;/li&gt;
-&lt;/ol&gt;</content><category term="owncloud"></category><category term="security"></category><category term="letsencrypt"></category><category term="freenas"></category></entry><entry><title>My First Post</title><link href="https://blog.airey.be/first-post.html" rel="alternate"></link><published>2016-07-06T00:49:00+02:00</published><updated>2016-07-06T00:49:00+02:00</updated><author><name>Andy Airey</name></author><id>tag:blog.airey.be,2016-07-06:/first-post.html</id><summary type="html">&lt;p&gt;First Post to this blog&lt;/p&gt;</summary><content type="html">&lt;p&gt;So, my first post on this blog.&lt;/p&gt;
-&lt;p&gt;Let's not make any promises here, but a frequency of one post a month would already be high above my expectations of myself. :)&lt;/p&gt;
-&lt;p&gt;As some may know I've tried a few other blogs but gave up on writing.
-Let's see where this takes us ...&lt;/p&gt;
+&lt;/ol&gt;</content><category term="owncloud"></category><category term="security"></category><category term="letsencrypt"></category><category term="freenas"></category></entry><entry><title>My First Post</title><link href="https://blog.airey.be/first-post.html" rel="alternate"></link><published>2016-07-06T00:49:00+02:00</published><updated>2016-07-06T00:49:00+02:00</updated><author><name>Andy Airey</name></author><id>tag:blog.airey.be,2016-07-06:/first-post.html</id><summary type="html">&lt;p&gt;First Post to this&amp;nbsp;blog&lt;/p&gt;</summary><content type="html">&lt;p&gt;So, my first post on this&amp;nbsp;blog.&lt;/p&gt;
+&lt;p&gt;Let&amp;#8217;s not make any promises here, but a frequency of one post a month would already be high above my expectations of myself.&amp;nbsp;:)&lt;/p&gt;
+&lt;p&gt;As some may know I&amp;#8217;ve tried a few other blogs but gave up on writing.
+Let&amp;#8217;s see where this takes us&amp;nbsp;&amp;#8230;&lt;/p&gt;
 &lt;p&gt;I chose pelican as a static site generator because it uses Python.
-I preferred this over Jekyll's Ruby for example.&lt;/p&gt;
-&lt;p&gt;If you're interested in my setup, I basicly did something similar to &lt;a href="https://fedoramagazine.org/make-github-pages-blog-with-pelican/"&gt;this&lt;/a&gt;.&lt;/p&gt;
-&lt;p&gt;That's all for now.
-See you around!&lt;/p&gt;</content><category term="pelican"></category><category term="python"></category></entry></feed>
+I preferred this over Jekyll&amp;#8217;s Ruby for&amp;nbsp;example.&lt;/p&gt;
+&lt;p&gt;If you&amp;#8217;re interested in my setup, I basicly did something similar to &lt;a href="https://fedoramagazine.org/make-github-pages-blog-with-pelican/"&gt;this&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;That&amp;#8217;s all for now.
+See you&amp;nbsp;around!&lt;/p&gt;</content><category term="pelican"></category><category term="python"></category></entry></feed>

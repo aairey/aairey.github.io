@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>blog.airey.be - security</title><link href="https://blog.airey.be/" rel="alternate"></link><link href="https://blog.airey.be/feeds/security.atom.xml" rel="self"></link><id>https://blog.airey.be/</id><updated>2016-10-17T13:30:00+02:00</updated><entry><title>VirtualBox on a SecureBoot enabled system</title><link href="https://blog.airey.be/secureboot-virtualbox.html" rel="alternate"></link><published>2016-10-06T13:27:00+02:00</published><updated>2016-10-17T13:30:00+02:00</updated><author><name>Andy Airey</name></author><id>tag:blog.airey.be,2016-10-06:/secureboot-virtualbox.html</id><summary type="html">&lt;p&gt;Installing VirtualBox on a SecureBoot enabled system can be tedious. Here I explain how to sign the kernel modules so that you can load them into the kernel.&lt;/p&gt;</summary><content type="html">&lt;p&gt;Hello again,&lt;/p&gt;
+<feed xmlns="http://www.w3.org/2005/Atom"><title>blog.airey.be - security</title><link href="https://blog.airey.be/" rel="alternate"></link><link href="https://blog.airey.be/feeds/security.atom.xml" rel="self"></link><id>https://blog.airey.be/</id><updated>2016-10-17T13:30:00+02:00</updated><entry><title>VirtualBox on a SecureBoot enabled system</title><link href="https://blog.airey.be/secureboot-virtualbox.html" rel="alternate"></link><published>2016-10-06T13:27:00+02:00</published><updated>2016-10-17T13:30:00+02:00</updated><author><name>Andy Airey</name></author><id>tag:blog.airey.be,2016-10-06:/secureboot-virtualbox.html</id><summary type="html">&lt;p&gt;Installing VirtualBox on a SecureBoot enabled system can be tedious. Here I explain how to sign the kernel modules so that you can load them into the&amp;nbsp;kernel.&lt;/p&gt;</summary><content type="html">&lt;p&gt;Hello&amp;nbsp;again,&lt;/p&gt;
 &lt;p&gt;Apparently the kernel modules that Oracle provide for VirtualBox &lt;a href="https://gorka.eguileor.com/vbox-vmware-in-secureboot-linux/"&gt;are not signed&lt;/a&gt;.&lt;/p&gt;
-&lt;p&gt;When starting &lt;code&gt;virtualbox&lt;/code&gt; you will get an error that the modules are not loaded.&lt;/p&gt;
+&lt;p&gt;When starting &lt;code&gt;virtualbox&lt;/code&gt; you will get an error that the modules are not&amp;nbsp;loaded.&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="n"&gt;WARNING&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="n"&gt;The&lt;/span&gt; &lt;span class="n"&gt;vboxdrv&lt;/span&gt; &lt;span class="n"&gt;kernel&lt;/span&gt; &lt;span class="n"&gt;module&lt;/span&gt; &lt;span class="k"&gt;is&lt;/span&gt; &lt;span class="n"&gt;not&lt;/span&gt; &lt;span class="n"&gt;loaded&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt; &lt;span class="n"&gt;Either&lt;/span&gt; &lt;span class="n"&gt;there&lt;/span&gt; &lt;span class="k"&gt;is&lt;/span&gt; &lt;span class="n"&gt;no&lt;/span&gt; &lt;span class="n"&gt;module&lt;/span&gt;
          &lt;span class="n"&gt;available&lt;/span&gt; &lt;span class="k"&gt;for&lt;/span&gt; &lt;span class="n"&gt;the&lt;/span&gt; &lt;span class="n"&gt;current&lt;/span&gt; &lt;span class="n"&gt;kernel&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="mf"&gt;4.7&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="mi"&gt;5&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="mi"&gt;200&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="na"&gt;fc24&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="na"&gt;x86_64&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt; &lt;span class="n"&gt;or&lt;/span&gt; &lt;span class="n"&gt;it&lt;/span&gt; &lt;span class="n"&gt;failed&lt;/span&gt; &lt;span class="n"&gt;to&lt;/span&gt;
          &lt;span class="n"&gt;load&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt; &lt;span class="n"&gt;Please&lt;/span&gt; &lt;span class="n"&gt;recompile&lt;/span&gt; &lt;span class="n"&gt;the&lt;/span&gt; &lt;span class="n"&gt;kernel&lt;/span&gt; &lt;span class="n"&gt;module&lt;/span&gt; &lt;span class="n"&gt;and&lt;/span&gt; &lt;span class="n"&gt;install&lt;/span&gt; &lt;span class="n"&gt;it&lt;/span&gt; &lt;span class="n"&gt;by&lt;/span&gt;
@@ -12,7 +12,7 @@
 &lt;/pre&gt;&lt;/div&gt;
 
 
-&lt;p&gt;When you run &lt;code&gt;sudo /sbin/vboxconfig&lt;/code&gt;, it will take very long and eventually fail.&lt;/p&gt;
+&lt;p&gt;When you run &lt;code&gt;sudo /sbin/vboxconfig&lt;/code&gt;, it will take very long and eventually&amp;nbsp;fail.&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;vboxdrv.sh: Building VirtualBox kernel modules.
 vboxdrv.sh: Starting VirtualBox services.
 vboxdrv.sh: Building VirtualBox kernel modules.
@@ -24,10 +24,10 @@ as root.
 &lt;/pre&gt;&lt;/div&gt;
 
 
-&lt;p&gt;So we can sign them ourselves and load them into the kernel.&lt;/p&gt;
-&lt;p&gt;The only downside is you have to do this after every kernel update.&lt;/p&gt;
+&lt;p&gt;So we can sign them ourselves and load them into the&amp;nbsp;kernel.&lt;/p&gt;
+&lt;p&gt;The only downside is you have to do this after every kernel&amp;nbsp;update.&lt;/p&gt;
 &lt;p&gt;So I wrote a little script to simplify that for me.
-This was done on Fedora 23 and 24 Workstation.&lt;/p&gt;
+This was done on Fedora 23 and 24&amp;nbsp;Workstation.&lt;/p&gt;
 &lt;table class="highlighttable"&gt;&lt;tr&gt;&lt;td class="linenos"&gt;&lt;div class="linenodiv"&gt;&lt;pre&gt;1
 2
 3
@@ -44,14 +44,14 @@ sudo mokutil --import MOK_&lt;span class="nv"&gt;$KERNEL_VERSION&lt;/span&gt;.de
 &lt;/pre&gt;&lt;/div&gt;
 &lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
 
-&lt;p&gt;So basicly you will have to do:&lt;/p&gt;
+&lt;p&gt;So basicly you will have to&amp;nbsp;do:&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;sudo dnf update -y &amp;amp;&amp;amp; sudo systemctl reboot     # update kernel
 ~/bin/mokutil.sh                                # run script against new kernel
 sudo reboot                                     # reboot and follow the signing process at boot time
 &lt;/pre&gt;&lt;/div&gt;
 
 
-&lt;p&gt;After the reboot you can then check the logs if the module was loaded with the following commands:&lt;/p&gt;
+&lt;p&gt;After the reboot you can then check the logs if the module was loaded with the following&amp;nbsp;commands:&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;sudo keyctl list %:.system_keyring
 dmesg | grep &amp;#39;EFI: Loaded cert&amp;#39;
 &lt;/pre&gt;&lt;/div&gt;</content><category term="security"></category><category term="fedora"></category><category term="virtualisation"></category><category term="kernel"></category></entry></feed>

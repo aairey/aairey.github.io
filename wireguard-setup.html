@@ -20,10 +20,20 @@
     <link href="https://blog.airey.be/feeds/all.atom.xml" type="application/atom+xml" rel="alternate" title="blog.airey.be Atom">
 
 
-    <link rel="shortcut icon" href="https://blog.airey.be/images/favicon.ico" type="image/x-icon">
-    <link rel="icon" href="https://blog.airey.be/images/favicon.ico" type="image/x-icon">
+    <link rel="shortcut icon" href="http://localhost:8000/images/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="http://localhost:8000/images/favicon.ico" type="image/x-icon">
 
+<!-- Google Analytics -->
+<script type="text/javascript">
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
 
+  ga('create', 'UA-125578210-1', 'auto');
+  ga('send', 'pageview');
+</script>
+<!-- End Google Analytics -->
     <!-- Chrome, Firefox OS and Opera -->
     <meta name="theme-color" content="#333333">
     <!-- Windows Phone -->
@@ -35,12 +45,12 @@
     <meta name="msapplication-TileColor" content="#333333">
 
 <meta name="author" content="Andy Airey" />
-<meta name="description" content="How To setup and use Wireguard on Fedora Workstation as client and Fedora Server as PtP and VPN server. Also covers the setup on Android" />
+<meta name="description" content="How To setup and use Wireguard on Fedora Workstation as client and Fedora Server as PtP and VPN server. Also covers the setup on Android" />
 <meta name="keywords" content="fedora, security, vpn">
 
 <meta property="og:site_name" content="blog.airey.be"/>
-<meta property="og:title" content="Wireguard Setup on Fedora"/>
-<meta property="og:description" content="How To setup and use Wireguard on Fedora Workstation as client and Fedora Server as PtP and VPN server. Also covers the setup on Android"/>
+<meta property="og:title" content="Wireguard Setup on Fedora"/>
+<meta property="og:description" content="How To setup and use Wireguard on Fedora Workstation as client and Fedora Server as PtP and VPN server. Also covers the setup on Android"/>
 <meta property="og:locale" content="en_US"/>
 <meta property="og:url" content="https://blog.airey.be/wireguard-setup.html"/>
 <meta property="og:type" content="article"/>
@@ -53,7 +63,7 @@
 <meta property="article:tag" content="vpn"/>
 <meta property="og:image" content="//en.gravatar.com/userimage/33572940/d1226e18865ebdb31edc84661c5abaa3.jpeg">
 
-  <title>blog.airey.be &ndash; Wireguard Setup on Fedora</title>
+  <title>blog.airey.be &ndash; Wireguard Setup on Fedora</title>
 
 </head>
 <body>
@@ -101,7 +111,7 @@
 <article class="single">
   <header>
       
-    <h1 id="wireguard-setup">Wireguard Setup on Fedora</h1>
+    <h1 id="wireguard-setup">Wireguard Setup on&nbsp;Fedora</h1>
     <p>
           Posted on Mon 10 September 2018 in <a href="https://blog.airey.be/category/homelab.html">homelab</a>
 
@@ -111,41 +121,41 @@
 
 
   <div>
-    <p>Ever since Linus Torvalds <a href="http://lkml.iu.edu/hypermail/linux/kernel/1808.0/02472.html">praised</a> Wireguard, I've been wanting to try it out.<br>
-Last week I finally got around to play with it, and boy was it easy and elegant to set up.</p>
-<p>It was really easy to set up, it took me longer to write this blog post than to set up wireguard on 3 peers.</p>
+    <p>Ever since Linus Torvalds <a href="http://lkml.iu.edu/hypermail/linux/kernel/1808.0/02472.html">praised</a> Wireguard, I&#8217;ve been wanting to try it out.<br>
+Last week I finally got around to play with it, and boy was it easy and elegant to set&nbsp;up.</p>
+<p>It was really easy to set up, it took me longer to write this blog post than to set up wireguard on 3&nbsp;peers.</p>
 <p>I used a Fedora Server as a first endpoint and my Fedora Workstation as a second endpoint.<br>
-Later on I also easily added my Android phone as a third endpoint, and set up the Fedora Server as a VPN server (routing traffic to the internal and external networks).</p>
-<p>Let me walk you through the setup steps.</p>
+Later on I also easily added my Android phone as a third endpoint, and set up the Fedora Server as a <span class="caps">VPN</span> server (routing traffic to the internal and external&nbsp;networks).</p>
+<p>Let me walk you through the setup&nbsp;steps.</p>
 <h1>Installation</h1>
-<p>We need to install wireguard first as it is not yet part of the mainline kernel.</p>
-<p>On the Fedora Server and Workstation:</p>
+<p>We need to install wireguard first as it is not yet part of the mainline&nbsp;kernel.</p>
+<p>On the Fedora Server and&nbsp;Workstation:</p>
 <div class="highlight"><pre><span></span>sudo dnf copr <span class="nb">enable</span> jdoss/wireguard
 sudo dnf install wireguard-dkms wireguard-tools
 </pre></div>
 
 
-<h1>Setting up the endpoints</h1>
+<h1>Setting up the&nbsp;endpoints</h1>
 <p>As you will see below the setup is very similar for both endpoints.<br>
-Note the difference in IP addresses.</p>
-<p>We will choose a static tunnel IP per host in the 10.0.0.0/24 range, but it could be any range of your choosing.</p>
-<p>Create a keypair on each host:</p>
+Note the difference in <span class="caps">IP</span>&nbsp;addresses.</p>
+<p>We will choose a static tunnel <span class="caps">IP</span> per host in the 10.0.0.0/24 range, but it could be any range of your&nbsp;choosing.</p>
+<p>Create a keypair on each&nbsp;host:</p>
 <div class="highlight"><pre><span></span>wg genkey &gt; private
 wg pubkey &lt; private
 </pre></div>
 
 
-<p>Take note of the public key to configure your other client later on.</p>
-<h2>First peer</h2>
-<p>Our first endpoint has a private IP address of 192.168.2.1/24 on enp2s0, adapt it to match your machine's private IP address.</p>
-<p>Interface Settings:</p>
+<p>Take note of the public key to configure your other client later&nbsp;on.</p>
+<h2>First&nbsp;peer</h2>
+<p>Our first endpoint has a private <span class="caps">IP</span> address of 192.168.2.1/24 on enp2s0, adapt it to match your machine&#8217;s private <span class="caps">IP</span>&nbsp;address.</p>
+<p>Interface&nbsp;Settings:</p>
 <div class="highlight"><pre><span></span>ip link add dev wg0 <span class="nb">type</span> wireguard
 ip address add dev wg0 <span class="m">10</span>.0.0.1/24
 wg <span class="nb">set</span> wg0 listen-port <span class="m">51820</span> private-key ./private
 </pre></div>
 
 
-<p>Peer Settings:</p>
+<p>Peer&nbsp;Settings:</p>
 <div class="highlight"><pre><span></span>wg <span class="nb">set</span> wg0 peer &lt;peer2-public-key&gt; allowed-ips <span class="m">10</span>.0.0.2/32 endpoint &lt;peer2-pulic-ip&gt;:51820
 ip link <span class="nb">set</span> wg0 up
 </pre></div>
@@ -153,35 +163,35 @@ ip link <span class="nb">set</span> wg0 up
 
 <p>The <code>allowed-ips</code> setting denotes what network lies at the other end of the tunnel.<br>
 Routes will automatically be set up towards these networks when the interface becomes active.<br>
-As a starting point we can use the other peer's tunnel IP address.</p>
-<h2>Second peer</h2>
-<p>Interface Settings:</p>
+As a starting point we can use the other peer&#8217;s tunnel <span class="caps">IP</span>&nbsp;address.</p>
+<h2>Second&nbsp;peer</h2>
+<p>Interface&nbsp;Settings:</p>
 <div class="highlight"><pre><span></span>ip link add dev wg0 <span class="nb">type</span> wireguard
 ip address add dev wg0 <span class="m">10</span>.0.0.2/24
 wg <span class="nb">set</span> wg0 listen-port <span class="m">51820</span> private-key ./private
 </pre></div>
 
 
-<p>Peer Settings:</p>
+<p>Peer&nbsp;Settings:</p>
 <div class="highlight"><pre><span></span>wg <span class="nb">set</span> wg0 peer &lt;peer2-public-key&gt; allowed-ips <span class="m">10</span>.0.0.1/24 endpoint &lt;peer1-pulic-ip&gt;:51820
 ip link <span class="nb">set</span> wg0 up
 </pre></div>
 
 
-<h2>Check connectivity</h2>
-<p>At this point you should be able to ping the other endpoint his 10.0.0.x address after the interface is up.</p>
-<p>The <code>wg</code> command should show you some useful output as well.</p>
-<p>Remember when doing tcpdump and forwarding ports, the connection is over UDP, not TCP!<br>
-Hint if you run with firewalld enabled: <code>firewall-cmd --add-port 51820/udp</code>, see Additional Settings below to do this automatically.</p>
-<h2>NAT and Dynamic endpoint IP address</h2>
-<p>If you are, like me, trying to set up your laptop to connect to a remote server, your public IP will most definitely change a lot.</p>
-<p>The solution to this is to use Dynamic DNS and use this DNS name in your endpoint configuration.<br>
+<h2>Check&nbsp;connectivity</h2>
+<p>At this point you should be able to ping the other endpoint his 10.0.0.x address after the interface is&nbsp;up.</p>
+<p>The <code>wg</code> command should show you some useful output as&nbsp;well.</p>
+<p>Remember when doing tcpdump and forwarding ports, the connection is over <span class="caps">UDP</span>, not <span class="caps">TCP</span>!<br>
+Hint if you run with firewalld enabled: <code>firewall-cmd --add-port 51820/udp</code>, see Additional Settings below to do this&nbsp;automatically.</p>
+<h2><span class="caps">NAT</span> and Dynamic endpoint <span class="caps">IP</span>&nbsp;address</h2>
+<p>If you are, like me, trying to set up your laptop to connect to a remote server, your public <span class="caps">IP</span> will most definitely change a&nbsp;lot.</p>
+<p>The solution to this is to use Dynamic <span class="caps">DNS</span> and use this <span class="caps">DNS</span> name in your endpoint configuration.<br>
 Even on Android <a href="https://play.google.com/store/apps/details?id=com.icecoldapps.dynamicdnsupdate">there is an app for that</a>.</p>
-<p>Also, there is a setting called <code>persistent-keepalive</code> that will assist firewalls to keep the tunnel alive.</p>
-<h2>Persistent configuration</h2>
-<p>The CLI tools are nice and all, but I want the VPN link to come up with my Fedora Server and easily bring up the connection with one commmand on my Workstation.</p>
-<p>No problem, <code>wg-quick</code> has got you covered.</p>
-<p>First export the current config to a file, link it to the device and enable the systemd service (if you want to bring the device up at boot time).</p>
+<p>Also, there is a setting called <code>persistent-keepalive</code> that will assist firewalls to keep the tunnel&nbsp;alive.</p>
+<h2>Persistent&nbsp;configuration</h2>
+<p>The <span class="caps">CLI</span> tools are nice and all, but I want the <span class="caps">VPN</span> link to come up with my Fedora Server and easily bring up the connection with one commmand on my&nbsp;Workstation.</p>
+<p>No problem, <code>wg-quick</code> has got you&nbsp;covered.</p>
+<p>First export the current config to a file, link it to the device and enable the systemd service (if you want to bring the device up at boot&nbsp;time).</p>
 <div class="highlight"><pre><span></span>wg showconf &gt; /etc/wiregaurd/wg0.conf
 chmod <span class="m">700</span> /etc/wireguard/wg0.conf
 wg setconf wg0 /etc/wireguard/wg0.conf
@@ -189,15 +199,15 @@ wg setconf wg0 /etc/wireguard/wg0.conf
 
 
 <p>You can now easily issue <code>wg-quick up wg0</code> and <code>wg-quick down wg0</code>.<br>
-To have it start at boot-time issue <code>systemctl enable wg-quick@wg0</code>. (make sure you stop it first manually before starting the service)</p>
-<h1>Android peer</h1>
-<p>Once you have Dynamic DNS set up on your Android using <a href="https://play.google.com/store/apps/details?id=com.icecoldapps.dynamicdnsupdate">this app</a>,</p>
-<h2>Android app setup</h2>
+To have it start at boot-time issue <code>systemctl enable wg-quick@wg0</code>. (make sure you stop it first manually before starting the&nbsp;service)</p>
+<h1>Android&nbsp;peer</h1>
+<p>Once you have Dynamic <span class="caps">DNS</span> set up on your Android using <a href="https://play.google.com/store/apps/details?id=com.icecoldapps.dynamicdnsupdate">this app</a>,</p>
+<h2>Android app&nbsp;setup</h2>
 <p>Install the <a href="https://play.google.com/store/apps/details?id=com.wireguard.android">Wireguard Android app</a>.</p>
-<p>The configuration is pretty straight-forward, but maybe just choose a different port than the one for your laptop, in case you are on the same network.</p>
-<p>On the <code>allowed-ips</code> section, specify '0.0.0.0/0. ::0/0' if you want to forward all internet traffic over this VPN (recommended for public WiFi).</p>
-<h2>Add peer configuration on the server</h2>
-<p>I added this Peer configuration to the existing <code>wg0.conf</code> file on the Server:</p>
+<p>The configuration is pretty straight-forward, but maybe just choose a different port than the one for your laptop, in case you are on the same&nbsp;network.</p>
+<p>On the <code>allowed-ips</code> section, specify &#8216;0.0.0.0/0. ::0/0&#8217; if you want to forward all internet traffic over this <span class="caps">VPN</span> (recommended for public&nbsp;WiFi).</p>
+<h2>Add peer configuration on the&nbsp;server</h2>
+<p>I added this Peer configuration to the existing <code>wg0.conf</code> file on the&nbsp;Server:</p>
 <div class="highlight"><pre><span></span><span class="k">[Peer]</span>
 <span class="c1">#mobile</span>
 <span class="na">PublicKey</span>           <span class="o">=</span> <span class="s">&lt;android-public-key&gt;</span>
@@ -207,14 +217,14 @@ To have it start at boot-time issue <code>systemctl enable wg-quick@wg0</code>. 
 </pre></div>
 
 
-<p>When forwarding traffic to the outside, make sure IP forwarding is on.</p>
+<p>When forwarding traffic to the outside, make sure <span class="caps">IP</span> forwarding is&nbsp;on.</p>
 <div class="highlight"><pre><span></span>sysctl net.ipv4.ip_forward<span class="o">=</span><span class="m">1</span>
 </pre></div>
 
 
-<h1>Additional settings</h1>
+<h1>Additional&nbsp;settings</h1>
 <p>To have the port and masquerading be set up automatically whenever I bring up the wireguard interface, I added soem <code>PostUp</code> and <code>PostDown</code> commands.</p>
-<p>My Interface Settings on the server are as follows;</p>
+<p>My Interface Settings on the server are as&nbsp;follows;</p>
 <div class="highlight"><pre><span></span><span class="k">[Interface]</span>
 <span class="na">Address</span>    <span class="o">=</span> <span class="s">10.0.0.1/24</span>
 <span class="na">PostUp</span>     <span class="o">=</span> <span class="s">firewall-cmd --add-port 51820/udp &amp;&amp; firewall-cmd --add-rich-rule=&#39;rule family=ipv4 source address=10.0.0.0/24 masquerade&#39;</span>
@@ -224,13 +234,13 @@ To have it start at boot-time issue <code>systemctl enable wg-quick@wg0</code>. 
 </pre></div>
 
 
-<p>Now you can enjoy a very fast and easy to maintain VPN configuration on the road, whether it's on your mobile or on your laptop.</p>
-<h1>More Resources</h1>
+<p>Now you can enjoy a very fast and easy to maintain <span class="caps">VPN</span> configuration on the road, whether it&#8217;s on your mobile or on your&nbsp;laptop.</p>
+<h1>More&nbsp;Resources</h1>
 <ul>
 <li>Wireguard docs for <a href="https://www.wireguard.com/install/">installation</a></li>
-<li>Wireguard docs for <a href="https://www.wireguard.com/install/">QuickStart setup</a></li>
-<li><a href="https://wiki.archlinux.org/index.php/WireGuard">Arch Wiki</a> was really helpful, as always.</li>
-<li><a href="https://www.rootusers.com/how-to-use-firewalld-rich-rules-and-zones-for-filtering-and-nat/">Blog post</a> on firewalld, scroll down to masquerading </li>
+<li>Wireguard docs for <a href="https://www.wireguard.com/install/">QuickStart&nbsp;setup</a></li>
+<li><a href="https://wiki.archlinux.org/index.php/WireGuard">Arch Wiki</a> was really helpful, as&nbsp;always.</li>
+<li><a href="https://www.rootusers.com/how-to-use-firewalld-rich-rules-and-zones-for-filtering-and-nat/">Blog post</a> on firewalld, scroll down to&nbsp;masquerading </li>
 </ul>
   </div>
   <div class="tag-cloud">
@@ -263,7 +273,7 @@ To have it start at boot-time issue <code>systemctl enable wg-quick@wg0</code>. 
 </article>
 
     <footer>
-<p>&copy;  2016</p>
+<p>&copy;  2018</p>
 <p>    Powered by <a href="http://getpelican.com" target="_blank">Pelican</a> - <a href="https://github.com/alexandrevicenzi/flex" target="_blank">Flex</a> theme by <a href="http://alexandrevicenzi.com" target="_blank">Alexandre Vicenzi</a>
 </p>    </footer>
   </main>
