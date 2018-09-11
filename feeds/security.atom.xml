@@ -1,5 +1,126 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>blog.airey.be - security</title><link href="https://blog.airey.be/" rel="alternate"></link><link href="https://blog.airey.be/feeds/security.atom.xml" rel="self"></link><id>https://blog.airey.be/</id><updated>2016-10-17T13:30:00+02:00</updated><entry><title>VirtualBox on a SecureBoot enabled system</title><link href="https://blog.airey.be/secureboot-virtualbox.html" rel="alternate"></link><published>2016-10-06T13:27:00+02:00</published><updated>2016-10-17T13:30:00+02:00</updated><author><name>Andy Airey</name></author><id>tag:blog.airey.be,2016-10-06:/secureboot-virtualbox.html</id><summary type="html">&lt;p&gt;Installing VirtualBox on a SecureBoot enabled system can be tedious. Here I explain how to sign the kernel modules so that you can load them into the&amp;nbsp;kernel.&lt;/p&gt;</summary><content type="html">&lt;p&gt;Hello&amp;nbsp;again,&lt;/p&gt;
+<feed xmlns="http://www.w3.org/2005/Atom"><title>blog.airey.be - security</title><link href="https://blog.airey.be/" rel="alternate"></link><link href="https://blog.airey.be/feeds/security.atom.xml" rel="self"></link><id>https://blog.airey.be/</id><updated>2018-09-11T23:11:00+02:00</updated><entry><title>Wireguard Setup on Fedora</title><link href="https://blog.airey.be/wireguard-setup.html" rel="alternate"></link><published>2018-09-10T21:49:00+02:00</published><updated>2018-09-11T23:11:00+02:00</updated><author><name>Andy Airey</name></author><id>tag:blog.airey.be,2018-09-10:/wireguard-setup.html</id><summary type="html">&lt;p&gt;How To setup and use Wireguard on Fedora Workstation as client and Fedora Server as PtP and &lt;span class="caps"&gt;VPN&lt;/span&gt; server. Also covers the setup on&amp;nbsp;Android&lt;/p&gt;</summary><content type="html">&lt;p&gt;&lt;img alt="WireGueard logo" src="images/wireguard.png"&gt;&lt;/p&gt;
+&lt;p&gt;Ever since Linus Torvalds &lt;a href="http://lkml.iu.edu/hypermail/linux/kernel/1808.0/02472.html"&gt;praised&lt;/a&gt; Wireguard, I&amp;#8217;ve been wanting to try it out.&lt;br&gt;
+Last week I finally got around to play with it, and boy was it easy and elegant to set&amp;nbsp;up.&lt;/p&gt;
+&lt;p&gt;It was really easy to set up, it took me longer to write this blog post than to set up wireguard on 3&amp;nbsp;peers.&lt;/p&gt;
+&lt;p&gt;I used a Fedora Server as a first endpoint and my Fedora Workstation as a second endpoint.&lt;br&gt;
+Later on I also easily added my Android phone as a third endpoint, and set up the Fedora Server as a &lt;span class="caps"&gt;VPN&lt;/span&gt; server (routing traffic to the internal and external&amp;nbsp;networks).&lt;/p&gt;
+&lt;p&gt;Let me walk you through the setup&amp;nbsp;steps.&lt;/p&gt;
+&lt;h1&gt;Installation&lt;/h1&gt;
+&lt;p&gt;We need to install wireguard first as it is not yet part of the mainline&amp;nbsp;kernel.&lt;/p&gt;
+&lt;p&gt;On the Fedora Server and&amp;nbsp;Workstation:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;sudo dnf copr &lt;span class="nb"&gt;enable&lt;/span&gt; jdoss/wireguard
+sudo dnf install wireguard-dkms wireguard-tools
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;h1&gt;Setting up the&amp;nbsp;endpoints&lt;/h1&gt;
+&lt;p&gt;As you will see below the setup is very similar for both endpoints.&lt;br&gt;
+Note the difference in &lt;span class="caps"&gt;IP&lt;/span&gt;&amp;nbsp;addresses.&lt;/p&gt;
+&lt;p&gt;We will choose a static tunnel &lt;span class="caps"&gt;IP&lt;/span&gt; per host in the 10.0.0.0/24 range, but it could be any range of your&amp;nbsp;choosing.&lt;/p&gt;
+&lt;p&gt;Create a keypair on each&amp;nbsp;host:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;wg genkey &amp;gt; private
+wg pubkey &amp;lt; private
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Take note of the public key to configure your other client later&amp;nbsp;on.&lt;/p&gt;
+&lt;h2&gt;First&amp;nbsp;peer&lt;/h2&gt;
+&lt;p&gt;Our first endpoint has a private &lt;span class="caps"&gt;IP&lt;/span&gt; address of 192.168.2.1/24 on enp2s0, adapt it to match your machine&amp;#8217;s private &lt;span class="caps"&gt;IP&lt;/span&gt;&amp;nbsp;address.&lt;/p&gt;
+&lt;p&gt;Interface&amp;nbsp;Settings:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;ip link add dev wg0 &lt;span class="nb"&gt;type&lt;/span&gt; wireguard
+ip address add dev wg0 &lt;span class="m"&gt;10&lt;/span&gt;.0.0.1/24
+wg &lt;span class="nb"&gt;set&lt;/span&gt; wg0 listen-port &lt;span class="m"&gt;51820&lt;/span&gt; private-key ./private
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Peer&amp;nbsp;Settings:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;wg &lt;span class="nb"&gt;set&lt;/span&gt; wg0 peer &amp;lt;peer2-public-key&amp;gt; allowed-ips &lt;span class="m"&gt;10&lt;/span&gt;.0.0.2/32 endpoint &amp;lt;peer2-pulic-ip&amp;gt;:51820
+ip link &lt;span class="nb"&gt;set&lt;/span&gt; wg0 up
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;The &lt;code&gt;allowed-ips&lt;/code&gt; setting denotes what network lies at the other end of the tunnel.&lt;br&gt;
+Routes will automatically be set up towards these networks when the interface becomes active.&lt;br&gt;
+As a starting point we can use the other peer&amp;#8217;s tunnel &lt;span class="caps"&gt;IP&lt;/span&gt;&amp;nbsp;address.&lt;/p&gt;
+&lt;h2&gt;Second&amp;nbsp;peer&lt;/h2&gt;
+&lt;p&gt;Interface&amp;nbsp;Settings:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;ip link add dev wg0 &lt;span class="nb"&gt;type&lt;/span&gt; wireguard
+ip address add dev wg0 &lt;span class="m"&gt;10&lt;/span&gt;.0.0.2/24
+wg &lt;span class="nb"&gt;set&lt;/span&gt; wg0 listen-port &lt;span class="m"&gt;51820&lt;/span&gt; private-key ./private
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Peer&amp;nbsp;Settings:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;wg &lt;span class="nb"&gt;set&lt;/span&gt; wg0 peer &amp;lt;peer2-public-key&amp;gt; allowed-ips &lt;span class="m"&gt;10&lt;/span&gt;.0.0.1/24 endpoint &amp;lt;peer1-pulic-ip&amp;gt;:51820
+ip link &lt;span class="nb"&gt;set&lt;/span&gt; wg0 up
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;h2&gt;Check&amp;nbsp;connectivity&lt;/h2&gt;
+&lt;p&gt;At this point you should be able to ping the other endpoint his 10.0.0.x address after the interface is&amp;nbsp;up.&lt;/p&gt;
+&lt;p&gt;The &lt;code&gt;wg&lt;/code&gt; command should show you some useful output as&amp;nbsp;well.&lt;/p&gt;
+&lt;p&gt;Remember when doing tcpdump and forwarding ports, the connection is over &lt;span class="caps"&gt;UDP&lt;/span&gt;, not &lt;span class="caps"&gt;TCP&lt;/span&gt;!&lt;br&gt;
+Hint if you run with firewalld enabled: &lt;code&gt;firewall-cmd --add-port 51820/udp&lt;/code&gt;, see Additional Settings below to do this&amp;nbsp;automatically.&lt;/p&gt;
+&lt;h2&gt;&lt;span class="caps"&gt;NAT&lt;/span&gt; and Dynamic endpoint &lt;span class="caps"&gt;IP&lt;/span&gt;&amp;nbsp;address&lt;/h2&gt;
+&lt;p&gt;If you are, like me, trying to set up your laptop to connect to a remote server, your public &lt;span class="caps"&gt;IP&lt;/span&gt; will most definitely change a&amp;nbsp;lot.&lt;/p&gt;
+&lt;p&gt;The solution to this is to use Dynamic &lt;span class="caps"&gt;DNS&lt;/span&gt; and use this &lt;span class="caps"&gt;DNS&lt;/span&gt; name in your endpoint configuration.&lt;br&gt;
+Even on Android &lt;a href="https://play.google.com/store/apps/details?id=com.icecoldapps.dynamicdnsupdate"&gt;there is an app for that&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;Also, there is a setting called &lt;code&gt;persistent-keepalive&lt;/code&gt; that will assist firewalls to keep the tunnel&amp;nbsp;alive.&lt;/p&gt;
+&lt;h2&gt;Persistent&amp;nbsp;configuration&lt;/h2&gt;
+&lt;p&gt;The &lt;span class="caps"&gt;CLI&lt;/span&gt; tools are nice and all, but I want the &lt;span class="caps"&gt;VPN&lt;/span&gt; link to come up with my Fedora Server and easily bring up the connection with one commmand on my&amp;nbsp;Workstation.&lt;/p&gt;
+&lt;p&gt;No problem, &lt;code&gt;wg-quick&lt;/code&gt; has got you&amp;nbsp;covered.&lt;/p&gt;
+&lt;p&gt;First export the current config to a file, link it to the device and enable the systemd service (if you want to bring the device up at boot&amp;nbsp;time).&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;wg showconf &amp;gt; /etc/wiregaurd/wg0.conf
+chmod &lt;span class="m"&gt;700&lt;/span&gt; /etc/wireguard/wg0.conf
+wg setconf wg0 /etc/wireguard/wg0.conf
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;You can now easily issue &lt;code&gt;wg-quick up wg0&lt;/code&gt; and &lt;code&gt;wg-quick down wg0&lt;/code&gt;.&lt;br&gt;
+To have it start at boot-time issue &lt;code&gt;systemctl enable wg-quick@wg0&lt;/code&gt;. (make sure you stop it first manually before starting the&amp;nbsp;service)&lt;/p&gt;
+&lt;h1&gt;Android&amp;nbsp;peer&lt;/h1&gt;
+&lt;p&gt;Once you have Dynamic &lt;span class="caps"&gt;DNS&lt;/span&gt; set up on your Android using &lt;a href="https://play.google.com/store/apps/details?id=com.icecoldapps.dynamicdnsupdate"&gt;this app&lt;/a&gt;,&lt;/p&gt;
+&lt;h2&gt;Android app&amp;nbsp;setup&lt;/h2&gt;
+&lt;p&gt;Install the &lt;a href="https://play.google.com/store/apps/details?id=com.wireguard.android"&gt;Wireguard Android app&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;The configuration is pretty straight-forward, but maybe just choose a different port than the one for your laptop, in case you are on the same&amp;nbsp;network.&lt;/p&gt;
+&lt;p&gt;On the &lt;code&gt;allowed-ips&lt;/code&gt; section, specify &amp;#8216;0.0.0.0/0. ::0/0&amp;#8217; if you want to forward all internet traffic over this &lt;span class="caps"&gt;VPN&lt;/span&gt; (recommended for public&amp;nbsp;WiFi).&lt;/p&gt;
+&lt;h2&gt;Add peer configuration on the&amp;nbsp;server&lt;/h2&gt;
+&lt;p&gt;I added this Peer configuration to the existing &lt;code&gt;wg0.conf&lt;/code&gt; file on the&amp;nbsp;Server:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="k"&gt;[Peer]&lt;/span&gt;
+&lt;span class="c1"&gt;#mobile&lt;/span&gt;
+&lt;span class="na"&gt;PublicKey&lt;/span&gt;           &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="s"&gt;&amp;lt;android-public-key&amp;gt;&lt;/span&gt;
+&lt;span class="na"&gt;AllowedIPs&lt;/span&gt;          &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="s"&gt;10.0.0.3/32&lt;/span&gt;
+&lt;span class="na"&gt;Endpoint&lt;/span&gt;            &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="s"&gt;server.dyndns.com:51821&lt;/span&gt;
+&lt;span class="na"&gt;PersistentKeepalive&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="s"&gt;25&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;When forwarding traffic to the outside, make sure &lt;span class="caps"&gt;IP&lt;/span&gt; forwarding is&amp;nbsp;on.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;sysctl net.ipv4.ip_forward&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;1&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;h1&gt;Additional&amp;nbsp;settings&lt;/h1&gt;
+&lt;p&gt;To have the port and masquerading be set up automatically whenever I bring up the wireguard interface, I added soem &lt;code&gt;PostUp&lt;/code&gt; and &lt;code&gt;PostDown&lt;/code&gt; commands.&lt;/p&gt;
+&lt;p&gt;My Interface Settings on the server are as&amp;nbsp;follows;&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="k"&gt;[Interface]&lt;/span&gt;
+&lt;span class="na"&gt;Address&lt;/span&gt;    &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="s"&gt;10.0.0.1/24&lt;/span&gt;
+&lt;span class="na"&gt;PostUp&lt;/span&gt;     &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="s"&gt;firewall-cmd --add-port 51820/udp &amp;amp;&amp;amp; firewall-cmd --add-rich-rule=&amp;#39;rule family=ipv4 source address=10.0.0.0/24 masquerade&amp;#39;&lt;/span&gt;
+&lt;span class="na"&gt;PostDown&lt;/span&gt;   &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="s"&gt;firewall-cmd --remove-port 51820/udp &amp;amp;&amp;amp; firewall-cmd --remove-rich-rule=&amp;#39;rule family=ipv4 source address=10.0.0.0/24 masquerade&amp;#39;&lt;/span&gt;
+&lt;span class="na"&gt;ListenPort&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="s"&gt;51820&lt;/span&gt;
+&lt;span class="na"&gt;PrivateKey&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="s"&gt;&amp;lt;private-key&amp;gt;&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Now you can enjoy a very fast and easy to maintain &lt;span class="caps"&gt;VPN&lt;/span&gt; configuration on the road, whether it&amp;#8217;s on your mobile or on your&amp;nbsp;laptop.&lt;/p&gt;
+&lt;h1&gt;More&amp;nbsp;Resources&lt;/h1&gt;
+&lt;ul&gt;
+&lt;li&gt;Wireguard docs for &lt;a href="https://www.wireguard.com/install/"&gt;installation&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;Wireguard docs for &lt;a href="https://www.wireguard.com/install/"&gt;QuickStart&amp;nbsp;setup&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="https://wiki.archlinux.org/index.php/WireGuard"&gt;Arch Wiki&lt;/a&gt; was really helpful, as&amp;nbsp;always.&lt;/li&gt;
+&lt;li&gt;&lt;a href="https://www.rootusers.com/how-to-use-firewalld-rich-rules-and-zones-for-filtering-and-nat/"&gt;Blog post&lt;/a&gt; on firewalld, scroll down to&amp;nbsp;masquerading &lt;/li&gt;
+&lt;/ul&gt;</content><category term="fedora"></category><category term="security"></category><category term="vpn"></category></entry><entry><title>VirtualBox on a SecureBoot enabled system</title><link href="https://blog.airey.be/secureboot-virtualbox.html" rel="alternate"></link><published>2016-10-06T13:27:00+02:00</published><updated>2016-10-17T13:30:00+02:00</updated><author><name>Andy Airey</name></author><id>tag:blog.airey.be,2016-10-06:/secureboot-virtualbox.html</id><summary type="html">&lt;p&gt;Installing VirtualBox on a SecureBoot enabled system can be tedious. Here I explain how to sign the kernel modules so that you can load them into the&amp;nbsp;kernel.&lt;/p&gt;</summary><content type="html">&lt;p&gt;Hello&amp;nbsp;again,&lt;/p&gt;
 &lt;p&gt;Apparently the kernel modules that Oracle provide for VirtualBox &lt;a href="https://gorka.eguileor.com/vbox-vmware-in-secureboot-linux/"&gt;are not signed&lt;/a&gt;.&lt;/p&gt;
 &lt;p&gt;When starting &lt;code&gt;virtualbox&lt;/code&gt; you will get an error that the modules are not&amp;nbsp;loaded.&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="n"&gt;WARNING&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="n"&gt;The&lt;/span&gt; &lt;span class="n"&gt;vboxdrv&lt;/span&gt; &lt;span class="n"&gt;kernel&lt;/span&gt; &lt;span class="n"&gt;module&lt;/span&gt; &lt;span class="k"&gt;is&lt;/span&gt; &lt;span class="n"&gt;not&lt;/span&gt; &lt;span class="n"&gt;loaded&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt; &lt;span class="n"&gt;Either&lt;/span&gt; &lt;span class="n"&gt;there&lt;/span&gt; &lt;span class="k"&gt;is&lt;/span&gt; &lt;span class="n"&gt;no&lt;/span&gt; &lt;span class="n"&gt;module&lt;/span&gt;

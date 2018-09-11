@@ -5,35 +5,35 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
 <url>
 <loc>https://blog.airey.be/</loc>
-<lastmod>2018-09-11T23:03:42-00:00</lastmod>
+<lastmod>2018-09-11T23:12:17-00:00</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.6</priority>
 </url>
 
 <url>
 <loc>https://blog.airey.be/archives.html</loc>
-<lastmod>2018-09-11T23:03:42-00:00</lastmod>
+<lastmod>2018-09-11T23:12:17-00:00</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.6</priority>
 </url>
 
 <url>
 <loc>https://blog.airey.be/tags.html</loc>
-<lastmod>2018-09-11T23:03:42-00:00</lastmod>
+<lastmod>2018-09-11T23:12:17-00:00</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.6</priority>
 </url>
 
 <url>
 <loc>https://blog.airey.be/categories.html</loc>
-<lastmod>2018-09-11T23:03:42-00:00</lastmod>
+<lastmod>2018-09-11T23:12:17-00:00</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.6</priority>
 </url>
 
 <url>
 <loc>https://blog.airey.be/wireguard-setup.html</loc>
-<lastmod>2018-09-10T23:06:00+02:00</lastmod>
+<lastmod>2018-09-11T23:11:00+02:00</lastmod>
 <changefreq>monthly</changefreq>
 <priority>0.6</priority>
 </url>
@@ -82,14 +82,14 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
 <url>
 <loc>https://blog.airey.be/category/homelab.html</loc>
-<lastmod>2018-09-10T23:06:00+00:18</lastmod>
+<lastmod>2016-11-21T00:13:00+00:18</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.6</priority>
 </url>
 
 <url>
 <loc>https://blog.airey.be/category/security.html</loc>
-<lastmod>2016-10-17T13:30:00+00:18</lastmod>
+<lastmod>2018-09-11T23:11:00+00:18</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.6</priority>
 </url>
@@ -117,7 +117,7 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
 <url>
 <loc>https://blog.airey.be/tag/fedora.html</loc>
-<lastmod>2018-09-10T23:06:00+00:18</lastmod>
+<lastmod>2018-09-11T23:11:00+00:18</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.6</priority>
 </url>
@@ -159,14 +159,14 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
 <url>
 <loc>https://blog.airey.be/tag/security.html</loc>
-<lastmod>2018-09-10T23:06:00+00:18</lastmod>
+<lastmod>2018-09-11T23:11:00+00:18</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.6</priority>
 </url>
 
 <url>
 <loc>https://blog.airey.be/tag/vpn.html</loc>
-<lastmod>2018-09-10T23:06:00+00:18</lastmod>
+<lastmod>2018-09-11T23:11:00+00:18</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.6</priority>
 </url>
@@ -187,7 +187,7 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
 <url>
 <loc>https://blog.airey.be/author/andy-airey.html</loc>
-<lastmod>2018-09-10T23:06:00+00:18</lastmod>
+<lastmod>2018-09-11T23:11:00+00:18</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.6</priority>
 </url>
