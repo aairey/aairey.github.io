@@ -5,28 +5,28 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
 <url>
 <loc>https://blog.airey.be/</loc>
-<lastmod>2018-09-11T01:46:08-00:00</lastmod>
+<lastmod>2018-09-11T10:11:46-00:00</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.6</priority>
 </url>
 
 <url>
 <loc>https://blog.airey.be/archives.html</loc>
-<lastmod>2018-09-11T01:46:08-00:00</lastmod>
+<lastmod>2018-09-11T10:11:46-00:00</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.6</priority>
 </url>
 
 <url>
 <loc>https://blog.airey.be/tags.html</loc>
-<lastmod>2018-09-11T01:46:08-00:00</lastmod>
+<lastmod>2018-09-11T10:11:46-00:00</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.6</priority>
 </url>
 
 <url>
 <loc>https://blog.airey.be/categories.html</loc>
-<lastmod>2018-09-11T01:46:08-00:00</lastmod>
+<lastmod>2018-09-11T10:11:46-00:00</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.6</priority>
 </url>
