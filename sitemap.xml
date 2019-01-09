@@ -5,29 +5,36 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
 <url>
 <loc>https://blog.airey.be/</loc>
-<lastmod>2018-09-11T23:12:17-00:00</lastmod>
+<lastmod>2019-01-09T20:53:04-00:00</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.6</priority>
 </url>
 
 <url>
 <loc>https://blog.airey.be/archives.html</loc>
-<lastmod>2018-09-11T23:12:17-00:00</lastmod>
+<lastmod>2019-01-09T20:53:04-00:00</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.6</priority>
 </url>
 
 <url>
 <loc>https://blog.airey.be/tags.html</loc>
-<lastmod>2018-09-11T23:12:17-00:00</lastmod>
+<lastmod>2019-01-09T20:53:04-00:00</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.6</priority>
 </url>
 
 <url>
 <loc>https://blog.airey.be/categories.html</loc>
-<lastmod>2018-09-11T23:12:17-00:00</lastmod>
+<lastmod>2019-01-09T20:53:04-00:00</lastmod>
 <changefreq>daily</changefreq>
+<priority>0.6</priority>
+</url>
+
+<url>
+<loc>https://blog.airey.be/time-management-for-SAs.html</loc>
+<lastmod>2018-09-11T16:30:00+02:00</lastmod>
+<changefreq>monthly</changefreq>
 <priority>0.6</priority>
 </url>
 
@@ -81,6 +88,13 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 </url>
 
 <url>
+<loc>https://blog.airey.be/category/books.html</loc>
+<lastmod>2018-09-11T16:30:00+00:18</lastmod>
+<changefreq>daily</changefreq>
+<priority>0.6</priority>
+</url>
+
+<url>
 <loc>https://blog.airey.be/category/homelab.html</loc>
 <lastmod>2016-11-21T00:13:00+00:18</lastmod>
 <changefreq>daily</changefreq>
@@ -116,6 +130,13 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 </url>
 
 <url>
+<loc>https://blog.airey.be/tag/productivity.html</loc>
+<lastmod>2018-09-11T16:30:00+00:18</lastmod>
+<changefreq>daily</changefreq>
+<priority>0.6</priority>
+</url>
+
+<url>
 <loc>https://blog.airey.be/tag/fedora.html</loc>
 <lastmod>2018-09-11T23:11:00+00:18</lastmod>
 <changefreq>daily</changefreq>
@@ -144,6 +165,13 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 </url>
 
 <url>
+<loc>https://blog.airey.be/tag/notes.html</loc>
+<lastmod>2018-09-11T16:30:00+00:18</lastmod>
+<changefreq>daily</changefreq>
+<priority>0.6</priority>
+</url>
+
+<url>
 <loc>https://blog.airey.be/tag/letsencrypt.html</loc>
 <lastmod>2016-08-17T23:30:00+00:18</lastmod>
 <changefreq>daily</changefreq>
@@ -153,6 +181,13 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 <url>
 <loc>https://blog.airey.be/tag/owncloud.html</loc>
 <lastmod>2016-11-21T00:13:00+00:18</lastmod>
+<changefreq>daily</changefreq>
+<priority>0.6</priority>
+</url>
+
+<url>
+<loc>https://blog.airey.be/tag/lifehacks.html</loc>
+<lastmod>2018-09-11T16:30:00+00:18</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.6</priority>
 </url>

@@ -12,10 +12,10 @@
 
     <link rel="stylesheet" type="text/css" href="https://blog.airey.be/theme/stylesheet/style.min.css">
 
-  <link rel="stylesheet" type="text/css" href="https://blog.airey.be/theme/pygments/paraiso-dark.min.css">
+  <link rel="stylesheet" type="text/css" href="https://blog.airey.be/theme/pygments/native.min.css">
   <link rel="stylesheet" type="text/css" href="https://blog.airey.be/theme/font-awesome/css/font-awesome.min.css">
 
-    <link href="https://blog.airey.be/static/solarized-dark.css" rel="stylesheet">
+    <link href="https://blog.airey.be/extras/custom.css" rel="stylesheet">
 
     <link href="https://blog.airey.be/feeds/all.atom.xml" type="application/atom+xml" rel="alternate" title="blog.airey.be Atom">
 
@@ -52,7 +52,7 @@
 <meta property="og:title" content="Time Management for System Administrators"/>
 <meta property="og:description" content="Review and takeaways on the great book Time Management for System Administrators by Simon Limoncelli, published by O’Reilly."/>
 <meta property="og:locale" content="en_US"/>
-<meta property="og:url" content="https://blog.airey.be/drafts/time-management-for-SAs.html"/>
+<meta property="og:url" content="https://blog.airey.be/time-management-for-SAs.html"/>
 <meta property="og:type" content="article"/>
 <meta property="article:published_time" content="2018-09-11 00:54:00+02:00"/>
 <meta property="article:modified_time" content="2018-09-11 16:30:00+02:00"/>
@@ -131,38 +131,43 @@
           Posted on Tue 11 September 2018 in <a href="https://blog.airey.be/category/books.html">books</a>
 
 
-        &#8226; 3 min read
+        &#8226; 5 min read
     </p>
   </header>
 
 
   <div>
-    <p><img alt="O'Reilly Book Cover" src="images/time-management.png" style="float: left; padding-right: 10px; padding-top: 5px;" /></p>
+    <p><img alt="O'Reilly Book Cover \&lt;" src="images/time-management.png"></p>
 <p>After <em>4 years</em> I finally made enough time to finish reading this&nbsp;book.</p>
 <p>Sounds Ironic, no? Just goes to show how bad I needed some proper Time&nbsp;Management.</p>
-<p>By time I fully read it, I felt I had come up with some of the proposed solutions already throughout my (young) career myself, gained through experience.<br>
+<p>By time I fully read it, I felt I had come up with some of the proposed techniques already throughout my (young) career myself, gained through experience.<br>
 Throughout the years, I&#8217;ve always embraced Continuous Improvement and managing your time well is nefarious to this&nbsp;concept.</p>
 <p>So in this post, I will list my personal takeaways from the book - there might be much more in it to discover for yourself.<br>
 Although some proposed solutions may sound obvious for some people, I can&#8217;t recommend this book enough for System Adminstrators and even SysOps/<span class="caps">SRE</span> roles.<br>
 Whether you are just starting out your career or if you are facing issues managing your time properly.<br>
 Even these days with Agile and DevOps, some parts still make complete sense - or you can easily project it on the current&nbsp;times.</p>
 <p>This is the first time I write a &#8220;book review&#8221;, but as you can see it will be more a summary of my personal notes.<br>
-It&#8217;s a list of things that the book covered which I don&#8217;t do yet - or not enough - and that I need to look&nbsp;into.</p>
+It&#8217;s a list of things that the book covered which resonated for me, might be different for&nbsp;you.</p>
 <p>I will go over chapter by chapter and list my personal takeaways for each of&nbsp;them.</p>
-<h2>Some generic good&nbsp;advice</h2>
+<h2>Focus vs&nbsp;Interruption</h2>
 <ul>
-<li>ToDo list in&nbsp;morning</li>
-<li>Immutable&nbsp;coworker</li>
-<li>Write down thougts immediately to clear&nbsp;mind</li>
-<li>Plan project stuff during peak focus&nbsp;time</li>
-<li>Interruptions: Delegate it, Record it, Do&nbsp;it.</li>
-<li>Create Routines (weekly), fill up gas tank on sunday, walk-around the office on Mo <span class="amp">&amp;</span>&nbsp;Thu</li>
-<li>Record all requests, every&nbsp;time.</li>
-<li>10 minutes every morning to plan today&#8217;s todo&nbsp;list.</li>
-<li>21 days needed to create a&nbsp;habit.</li>
+<li>Have an immutable&nbsp;coworker.</li>
+<li>Dealing with interruptions: <ul>
+<li><strong>Delegate it</strong>: have someone else do it if you are in the middle of&nbsp;something</li>
+<li><strong>Record it</strong>: Write it down (create a ticket), notify the person that a ticket is created (preferably while he is still next to&nbsp;you)</li>
+<li><strong>Do it</strong>: If it is truly urgent, drop everything and just do&nbsp;it.</li>
 </ul>
-<h2>The&nbsp;Cycle</h2>
-<p>Daily to do list with columns Done, Priority, Time, Item.<br>
+</li>
+<li>Plan project stuff during peak focus&nbsp;time.</li>
+</ul>
+<h2>Routines</h2>
+<ul>
+<li>Create Routines (weekly), fill up gas tank on sunday, walk-around the office on Mo <span class="amp">&amp;</span> Thu, schedule a weekly chat with your boss&nbsp;&#8230;</li>
+<li>Always backup a file before&nbsp;editing</li>
+<li>Schedule reading&nbsp;time</li>
+</ul>
+<h2><span class="dquo">&#8220;</span>The Cycle&nbsp;System&#8221;</h2>
+<p>Daily to-do list with columns Done, Priority, Time, Item.<br>
 Only 3 priority levels: <em>A</em> (today), <em>B</em> (soon), <em>C</em> (everything&nbsp;else)</p>
 <table>
 <thead>
@@ -186,38 +191,101 @@ Only 3 priority levels: <em>A</em> (today), <em>B</em> (soon), <em>C</em> (every
 <td>1h</td>
 <td>Deploy new webserver for product y</td>
 </tr>
+<tr>
+<td></td>
+<td>B</td>
+<td>3h</td>
+<td>Try out molecule on an Ansible role</td>
+</tr>
 </tbody>
 </table>
 <ul>
+<li>Record all requests, every time. Use your brain for other&nbsp;stuff.</li>
+<li>Similarly, write down thoughts immediately to clear&nbsp;mind</li>
+<li>10 minutes every morning to plan today&#8217;s todo list, before opening your&nbsp;mail!</li>
 <li>Block timeslot on high concentration and energy part of the day to do project&nbsp;work</li>
 <li>Items that were not done Yesterday, keep getting added to the list of Today until done (during daily review in the&nbsp;morning)</li>
+<li>Let people know you were not able to finish their request by the end of the&nbsp;day</li>
+<li>When new tasks get added during the day, add them to tomorrows schedule or reshuffle today (allow for 1h interruption&nbsp;time)</li>
+<li>21 days needed to create a&nbsp;habit.</li>
+</ul>
+<h2>Life&nbsp;Goals</h2>
+<ul>
+<li>To achieve your long-term goals, you need to know what they are and work toward&nbsp;them</li>
+<li>Goals should be measurable, they need a tangible result or&nbsp;measurement</li>
+<li>Goals should have&nbsp;deadines</li>
+<li>Review your life goals on a monthly basis with the following&nbsp;table:</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>Professional</th>
+<th>Personal</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1 month</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>1 year</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>5 years</td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>Add goals and steps to achieve such goal to the table, these &#8220;next steps&#8221; can then be sprinkled over your regular ToDo&nbsp;list.</li>
+<li>Schedule this &#8220;Life Goal Review&#8221; on the first monday of every month for example, dedicate time to it behind a closed door.<br>
+  Add new ones and eliminate old&nbsp;ones.</li>
 </ul>
 <h2>Prioritization</h2>
 <ul>
-<li>First task on list gets done first&nbsp;(oldest)</li>
-<li>Based on customer expectation, blocking&nbsp;factor</li>
-<li>Biggest impact projects get priority over smaller non-impacting&nbsp;projects</li>
-<li>Request from boss get higher&nbsp;priority</li>
-<li>Understand Boss&#8217; goals, <span class="caps">KPI</span> -&nbsp;contribute</li>
+<li>First task on list gets done first (oldest), no time wasted picking a&nbsp;task</li>
+<li>Based on customer expectation, blocking factor.<br>
+  A small task that blocks a customer&#8217;s project will cost you the same amount of time to do it. The moment <em>when</em> you do it becomes important&nbsp;here.</li>
+<li>For project: high-impact projects get priority over smaller non-impacting projects, they benefit you more than smaller easy&nbsp;projects</li>
+<li>Requests from boss get a higher priority, don&#8217;t be the reason he is&nbsp;delayed.</li>
+<li><span class="dquo">&#8220;</span>Manage your Boss&#8221;: Understand his goals, <span class="caps">KPI</span>&#8217;s and contribute to&nbsp;them</li>
 </ul>
 <h2>Stress&nbsp;Management</h2>
 <ul>
 <li>Use vacation for decent breaks (save up for a 3-week&nbsp;break)</li>
 <li>Look into Yoga, meditation, massage (back muscles get tense from&nbsp;stress)</li>
 </ul>
-<h2>Email&nbsp;Management</h2>
+<h2>E-mail&nbsp;Management</h2>
 <ul>
 <li>Go for a Clean&nbsp;Inbox</li>
+<li>Similar to &#8220;Delegate, Record, Do&#8221;: <ul>
 <li>Filter</li>
 <li>Delete&nbsp;Unread</li>
-<li>Read and process (dont leave the mail to be read&nbsp;again)</li>
-<li>Do and delete, if task only takes a few&nbsp;min</li>
+<li>Read and &#8230;<ul>
+<li>Delete</li>
+<li>File</li>
+<li>Reply, then&nbsp;delete</li>
+<li>Delegate or forward, then&nbsp;delete</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>Don&#8217;t re-read an e-mail! Once you start reading it, finish it and take one of the above&nbsp;actions.</li>
+<li>Don&#8217;t use your inbox/mail system as an organizer, you have your To Do list for&nbsp;that</li>
 </ul>
 <h2>Time-wasters</h2>
 <ul>
-<li>Differentiate betwen work meeting vs status meeting, make it clear in the&nbsp;invite</li>
+<li>A time waster is any activity that has low ratio of benefit to time spent.
+  Rather than trying to do these activities more efficiently, it is better to try to eliminate&nbsp;them.</li>
+<li>Certain activities require to set an alarm so we are able to snap out of it before it eats all our time. (let me check this for 5 minutes &#8230; actually limit yourself and set an&nbsp;alarm)</li>
+<li>Differentiate between a work meeting vs status meeting, make it clear in the&nbsp;invite</li>
 <li>Start meetings on time, start with the most important items. Point latecomers to the&nbsp;minutes.</li>
-<li>Certain activities require to set an alarm so we are able to snap out of it before it eats all our time. (let me check this for 5 minutes &#8230; actually limit&nbsp;yourself)</li>
 </ul>
 <h2>Documentation</h2>
 <ul>
@@ -228,15 +296,47 @@ Only 3 priority levels: <em>A</em> (today), <em>B</em> (soon), <em>C</em> (every
 <h2>Automation</h2>
 <ul>
 <li>Makefile on each server that does the actions you usually need to do&nbsp;there</li>
-<li>Before we can automate something, we need to have done it manually first to understand the full&nbsp;process</li>
-<li>4 kinds of tasks: once easy, once hard, many times easy, many times hard.<ul>
-<li>Once easy: Automate it (or at least record what was done on the&nbsp;wiki)</li>
-<li>Once hard: Automate it (you can test step by step before you put together the full script) or outsource it (like installation of new product) but record&nbsp;it</li>
-<li>Many easy: Automate it&nbsp;(obvious)</li>
-<li>Many hard: Automate it (you can test step by step before you put together the full&nbsp;script)</li>
+<li>Before we can automate something, we need to have done it manually first to understand the full process, then document it step-by-step, then automate&nbsp;it</li>
+<li>Automate a task one step at a time and test in between (like crafting a&nbsp;oneliner)</li>
+<li>4 kinds of tasks:<ul>
+<li>Simple Things Done&nbsp;once</li>
+<li>Simple Things Done&nbsp;often</li>
+<li>Hard Things Done&nbsp;once</li>
+<li>Hard Things Done&nbsp;often</li>
 </ul>
 </li>
 </ul>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>Simple Things</th>
+<th>Hard Things</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Done Once</td>
+<td>Do it manually</td>
+<td>Automate it</td>
+</tr>
+<tr>
+<td>Done Often</td>
+<td>Automate it</td>
+<td>Buy or Write Software</td>
+</tr>
+</tbody>
+</table>
+<h1>Some personal thoughts on the&nbsp;book</h1>
+<p>In this book, some information may come across as dated, &#8220;Using pen and paper or a <span class="caps">PDA</span>. What?&#8221;<br>
+But I highly recommend you sit it through and translate it to modern equivalents. Not that much has changed as it may&nbsp;seem.</p>
+<p>For example, the Makefile per server sounds a bit old-fashioned in a world of containers, orchestrators and serverless.<br>
+With no <span class="caps">SSH</span> access a Makefile could still be interesting&nbsp;though.</p>
+<p>Say you have different products and you need to scale up or scale down this products services. You could have a generic set of tasks per product that calls <code>aws-cli</code>, <code>kubectl</code> or <code>ansible</code> underneath, depending on what kind of stack it is running&nbsp;on.</p>
+<p>You could also look at this book as a &#8220;<a href="https://gettingthingsdone.com/"><span class="caps">GTD</span></a> for sysadmins&#8221;, while somewhat true it still has it&#8217;s purpose and helps to relate to the mentioned problems and solutions&nbsp;thereof.</p>
+<p>For better E-mail management, I think the tips are great as we get overloaded by mailing list messages, <span class="caps">JIRA</span> notifications, trello board updates &#8230;<br>
+I think I would go even further and restrict myself to do some inbox cleaning (reading mail) only once a day, say, after lunch.
+E-mail is not that urgent usually - we have <span class="caps">IM</span> for that, which this book sadly does not cover&nbsp;:-).</p>
   </div>
   <div class="tag-cloud">
     <p>
